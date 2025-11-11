@@ -18,6 +18,7 @@ use App\Http\Controllers\PencariController;
 
 // Routes publik
 Route::get('/', [BerandaController::class, 'index'])->name('beranda');
+Route::get('/tentang', [BerandaController::class, 'tentang'])->name('tentang');
 
 
 // Routes autentikasi
