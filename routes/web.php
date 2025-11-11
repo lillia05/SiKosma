@@ -26,6 +26,11 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Routes profile (terautentikasi)
+Route::middleware('auth')->group(function () {
+Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+});
+
 // Routes pencari (terautentikasi)
 Route::middleware(['auth', 'auth.role:pencari'])->prefix('pencari')->name('pencari.')->group(function () {
     Route::get('/beranda', [PencariController::class, 'beranda'])->name('beranda');
