@@ -11,17 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembayaran', function (Blueprint $table) {
-            $table->id();
-            $table->string('kode_pembayaran')->unique();
-            $table->foreignId('id_pemesanan')->constrained('pemesanan');
-            $table->decimal('jumlah', 10, 2);
-            $table->enum('metode_pembayaran', ['transfer_bank', 'e_wallet', 'cash']);
-            $table->string('nama_bank')->nullable();
-            $table->string('nomor_rekening')->nullable();
-            $table->string('bukti_transfer')->nullable();
-            $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending');
+        Schema::create('payments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('booking_id');
+            $table->uuid('user_id');
+            $table->decimal('amount', 12, 2);
+            $table->enum('payment_method', ['Transfer Bank', 'E-Wallet'])->default('Transfer Bank');
+            $table->string('sender_bank_name');
+            $table->string('sender_account_number');
+            $table->string('sender_name');
+            $table->string('proof_image_url')->nullable();
+            $table->enum('status', ['Pending', 'Verified', 'Rejected'])->default('Pending');
             $table->timestamps();
+            $table->softDeletes();
+            
+            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->index('booking_id');
+            $table->index('user_id');
+            $table->index('status');
         });
     }
 
@@ -30,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pembayaran');
+        Schema::dropIfExists('payments');
     }
 };

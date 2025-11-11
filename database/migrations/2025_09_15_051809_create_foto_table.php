@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('foto', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('kos_id')->nullable()->constrained('kos')->onDelete('cascade');
-            $table->foreignId('id_kamar')->nullable()->constrained('kamar')->onDelete('cascade');
-            $table->string('path_file');
-            $table->string('nama_file');
+        Schema::create('kos_images', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('kos_id');
+            $table->string('image_url');
+            $table->string('image_type')->default('general');
+            $table->timestamps();
+            
+            $table->foreign('kos_id')->references('id')->on('kos')->onDelete('cascade');
+            $table->index('kos_id');
 });
-
     }
 
     /**
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('foto');
+        Schema::dropIfExists('kos_images');
     }
 };

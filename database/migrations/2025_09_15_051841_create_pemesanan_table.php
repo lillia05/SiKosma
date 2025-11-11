@@ -11,20 +11,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pemesanan', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('id_pengguna')->constrained('pengguna');
-            $table->foreignId('id_kamar')->constrained('kamar');
-            $table->date('tanggal_mulai');
-            $table->date('tanggal_selesai');
-            $table->enum('tipe_sewa', ['bulanan', 'tahunan']);
-            $table->integer('durasi_bulan');
-            $table->decimal('harga_kamar', 10, 2);
-            $table->decimal('total_harga', 10, 2);
-            $table->enum('status', ['pending', 'confirmed', 'active', 'completed', 'cancelled'])->default('pending');
+        Schema::create('bookings', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('booking_id')->unique();
+            $table->uuid('user_id');
+            $table->uuid('room_id');
+            $table->uuid('kos_id');
+            $table->date('start_date');
+            $table->integer('duration_years');
+            $table->date('end_date');
+            $table->decimal('total_price', 12, 2);
+            $table->enum('status', ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'])->default('PENDING');
             $table->timestamps();
+            $table->softDeletes();
+            
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
+            $table->foreign('kos_id')->references('id')->on('kos')->onDelete('cascade');
+            $table->index('user_id');
+            $table->index('room_id');
+            $table->index('kos_id');
+            $table->index('status');
         });
-
     }
 
     /**
@@ -32,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pemesanan');
+        Schema::dropIfExists('bookings');
     }
 };

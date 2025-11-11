@@ -12,22 +12,25 @@ return new class extends Migration
     public function up(): void
     {
             Schema::create('kos', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('id_pengguna')->constrained('pengguna')->onDelete('cascade');     
-                $table->string('nama_kos');
-                $table->integer('jumlah_kamar');
-                $table->integer('kamar_tersedia');
-                $table->text('deskripsi');
-                $table->text('alamat');
-                $table->enum('kelurahan', ['Kampung Baru', 'Gedong Meneng']);
-                $table->string('kecamatan')->default('Rajabasa');
-                $table->string('kota')->default('Bandar Lampung');
-                $table->enum('tipe_kos', ['putra', 'putri', 'campur']);
-                $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-                $table->text('alasan_penolakan')->nullable();
-                $table->timestamp('tanggal_disetujui')->nullable();
+            $table->uuid('id')->primary();
+            $table->uuid('user_id');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('phone_number');
+            $table->enum('type', ['Putra', 'Putri', 'Campur'])->default('Putra');
+            $table->string('address');
+            $table->string('city');
+            $table->string('google_maps_link')->nullable();
+            $table->enum('status', ['Aktif', 'Tidak Aktif', 'Menunggu', 'Ditolak', 'Disetujui'])->default('Menunggu');
+            $table->decimal('rating', 3, 1)->default(0);
+            $table->integer('total_reviews')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
+            
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->index('user_id');
+            $table->index('status');
     });
-
     }
 
     /**
