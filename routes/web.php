@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BerandaController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PencariController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,28 @@ use App\Http\Controllers\BerandaController;
 
 // Routes publik
 Route::get('/', [BerandaController::class, 'index'])->name('beranda');
+
+
+// Routes autentikasi
+Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Routes pencari (terautentikasi)
+Route::middleware(['auth', 'auth.role:pencari'])->prefix('pencari')->name('pencari.')->group(function () {
+    Route::get('/beranda', [PencariController::class, 'beranda'])->name('beranda');
+});
+
+// Routes pemilik (terautentikasi) - placeholder
+Route::middleware(['auth', 'auth.role:pemilik'])->prefix('pemilik')->name('pemilik.')->group(function () {
+    Route::get('/dashboard', function() {
+        return redirect()->route('beranda')->with('info', 'Dashboard Pemilik akan segera hadir!');
+    })->name('dashboard');
+});
+
+// Routes admin (terautentikasi) - placeholder
+Route::middleware(['auth', 'auth.role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', function() {
+        return redirect()->route('beranda')->with('info', 'Dashboard Admin akan segera hadir!');
+    })->name('dashboard');
+});
