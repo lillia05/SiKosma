@@ -16,7 +16,7 @@ class KosSeeder extends Seeder
         $wisma = User::where('email', 'wisma@email.com')->first();
         $lia = User::where('email', 'lia@email.com')->first();
 
-        // Kos 1 - Kos Putri Sahara
+        // Kos 1 - Kos Putri Sahara (Kampung Baru)
         $kos1 = Kos::create([
             'id' => Str::uuid(),
             'id_pengguna' => $akmal->id,
@@ -25,7 +25,7 @@ class KosSeeder extends Seeder
             'nomor_telepon' => '0821234567',
             'tipe' => 'Putri',
             'alamat' => 'Jl. Bumi Manti I Gg.Madinah II No. 62 Kampung Baru',
-            'kota' => 'Bandar Lampung',
+            'kota' => 'Kampung Baru',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
             'rating' => 4.9,
@@ -41,14 +41,14 @@ class KosSeeder extends Seeder
             'nomor_telepon' => '0821234567',
             'tipe' => 'Putra',
             'alamat' => 'Jl. Kampung Baru No. 20',
-            'kota' => 'Bandar Lampung',
+            'kota' => 'Kampung Baru',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
             'rating' => 4.5,
             'total_ulasan' => 3,
         ]);
 
-        // Kos 3 - Kos Putri Melati
+        // Kos 3 - Kos Putri Melati (Gedong Meneng)
         $kos3 = Kos::create([
             'id' => Str::uuid(),
             'id_pengguna' => $wisma->id,
@@ -56,15 +56,15 @@ class KosSeeder extends Seeder
             'deskripsi' => 'Kos putri yang nyaman dengan fasilitas lengkap dan aman.',
             'nomor_telepon' => '0822234567',
             'tipe' => 'Putri',
-            'alamat' => 'Jl. Gatot Subroto No. 45',
-            'kota' => 'Bandar Lampung',
+            'alamat' => 'Jl. Gatot Subroto No. 45 Gedong Meneng',
+            'kota' => 'Gedong Meneng',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
             'rating' => 4.8,
             'total_ulasan' => 8,
         ]);
 
-        // Kos 4 - Kos Putra Ali
+        // Kos 4 - Kos Putra Ali (Gedong Meneng)
         $kos4 = Kos::create([
             'id' => Str::uuid(),
             'id_pengguna' => $lia->id,
@@ -72,8 +72,8 @@ class KosSeeder extends Seeder
             'deskripsi' => 'Kos putra dengan harga terjangkau dan lokasi strategis.',
             'nomor_telepon' => '0823234567',
             'tipe' => 'Putra',
-            'alamat' => 'Jl. Ahmad Yani No. 10',
-            'kota' => 'Bandar Lampung',
+            'alamat' => 'Jl. Ahmad Yani No. 10 Gedong Meneng',
+            'kota' => 'Gedong Meneng',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
             'rating' => 4.2,

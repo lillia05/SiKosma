@@ -29,7 +29,7 @@ class BerandaController extends Controller
 
         // Filter berdasarkan lokasi (kota/daerah)
         if ($request->has('lokasi') && $request->lokasi) {
-            $query->where('kota', 'like', "%{$request->lokasi}%");
+            $query->where('kota', $request->lokasi);
         }
 
         // Filter berdasarkan tipe
