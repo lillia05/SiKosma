@@ -11,26 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
+        Schema::create('pemesanan', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('booking_id')->unique();
-            $table->uuid('user_id');
-            $table->uuid('room_id');
-            $table->uuid('kos_id');
-            $table->date('start_date');
-            $table->integer('duration_years');
-            $table->date('end_date');
-            $table->decimal('total_price', 12, 2);
+            $table->string('id_pemesanan')->unique();
+            $table->uuid('id_pengguna');
+            $table->uuid('id_kamar');
+            $table->uuid('id_kos');
+            $table->date('tanggal_mulai');
+            $table->integer('durasi_tahun');
+            $table->date('tanggal_selesai');
+            $table->decimal('total_harga', 12, 2);
             $table->enum('status', ['PENDING', 'CONFIRMED', 'COMPLETED', 'CANCELLED'])->default('PENDING');
             $table->timestamps();
             $table->softDeletes();
             
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
-            $table->foreign('kos_id')->references('id')->on('kos')->onDelete('cascade');
-            $table->index('user_id');
-            $table->index('room_id');
-            $table->index('kos_id');
+            $table->foreign('id_pengguna')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('id_kamar')->references('id')->on('kamar')->onDelete('cascade');
+            $table->foreign('id_kos')->references('id')->on('kos')->onDelete('cascade');
+            $table->index('id_pengguna');
+            $table->index('id_kamar');
+            $table->index('id_kos');
             $table->index('status');
         });
     }
@@ -40,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('pemesanan');
     }
 };

@@ -21,20 +21,20 @@ class BerandaController extends Controller
         if ($request->has('search') && $request->search) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('address', 'like', "%{$search}%")
-                  ->orWhere('city', 'like', "%{$search}%");
+                $q->where('nama', 'like', "%{$search}%")
+                  ->orWhere('alamat', 'like', "%{$search}%")
+                  ->orWhere('kota', 'like', "%{$search}%");
             });
         }
 
         // Filter berdasarkan lokasi (kota/daerah)
         if ($request->has('lokasi') && $request->lokasi) {
-            $query->where('city', 'like', "%{$request->lokasi}%");
+            $query->where('kota', 'like', "%{$request->lokasi}%");
         }
 
         // Filter berdasarkan tipe
         if ($request->has('type') && $request->type) {
-            $query->where('type', $request->type);
+            $query->where('tipe', $request->type);
         }
 
         $kosList = $query->paginate(12);

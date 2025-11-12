@@ -11,22 +11,24 @@ class Booking extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    protected $table = 'pemesanan';
+
     protected $fillable = [
-        'booking_id',
-        'user_id',
-        'room_id',
-        'kos_id',
-        'start_date',
-        'duration_years',
-        'end_date',
-        'total_price',
+        'id_pemesanan',
+        'id_pengguna',
+        'id_kamar',
+        'id_kos',
+        'tanggal_mulai',
+        'durasi_tahun',
+        'tanggal_selesai',
+        'total_harga',
         'status',
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
-        'total_price' => 'decimal:2',
+        'tanggal_mulai' => 'date',
+        'tanggal_selesai' => 'date',
+        'total_harga' => 'decimal:2',
     ];
 
     /**
@@ -34,7 +36,7 @@ class Booking extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_pengguna');
     }
 
     /**
@@ -42,7 +44,7 @@ class Booking extends Model
      */
     public function room()
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsTo(Room::class, 'id_kamar');
     }
 
     /**
@@ -50,7 +52,7 @@ class Booking extends Model
      */
     public function kos()
     {
-        return $this->belongsTo(Kos::class);
+        return $this->belongsTo(Kos::class, 'id_kos');
     }
 
     /**
@@ -58,7 +60,7 @@ class Booking extends Model
      */
     public function payment()
     {
-        return $this->hasOne(Payment::class);
+        return $this->hasOne(Payment::class, 'id_pemesanan');
     }
 }
 

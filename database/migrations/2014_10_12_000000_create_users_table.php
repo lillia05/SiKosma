@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->string('nama');
             $table->string('email')->unique();
-            $table->string('password');
-            $table->enum('role', ['admin', 'pencari', 'pemilik'])->default('pencari');
-            $table->string('phone')->nullable();
-            $table->string('address')->nullable();
-            $table->string('city')->nullable();
-            $table->enum('gender', ['Putra', 'Putri'])->nullable();
-            $table->string('bank_name')->nullable();
-            $table->string('account_number')->nullable();
+            $table->string('kata_sandi');
+            $table->enum('peran', ['admin', 'pencari', 'pemilik'])->default('pencari');
+            $table->string('telepon')->nullable();
+            $table->string('alamat')->nullable();
+            $table->string('kota')->nullable();
+            $table->enum('jenis_kelamin', ['Putra', 'Putri'])->nullable();
+            $table->string('nama_bank')->nullable();
+            $table->string('nomor_rekening')->nullable();
             $table->enum('status', ['Aktif', 'Tidak Aktif', 'Pending'])->default('Aktif');
             $table->timestamps();
             $table->softDeletes();

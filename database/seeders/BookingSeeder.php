@@ -19,69 +19,69 @@ class BookingSeeder extends Seeder
         $muhammad = User::where('email', 'muhammadakmal@gmail.com')->first();
 
         // Get kos
-        $kos1 = Kos::where('name', 'Kos Putri Sahara')->first();
-        $kos2 = Kos::where('name', 'Kos Putra Kampung Baru')->first();
-        $kos4 = Kos::where('name', 'Kos Putra Ali')->first();
+        $kos1 = Kos::where('nama', 'Kos Putri Sahara')->first();
+        $kos2 = Kos::where('nama', 'Kos Putra Kampung Baru')->first();
+        $kos4 = Kos::where('nama', 'Kos Putra Ali')->first();
 
         // Get rooms
-        $room1 = Room::where('kos_id', $kos1->id)->where('room_number', '3')->first();
-        $room2 = Room::where('kos_id', $kos2->id)->where('room_number', '5')->first();
-        $room3 = Room::where('kos_id', $kos1->id)->where('room_number', '7')->first();
-        $room4 = Room::where('kos_id', $kos4->id)->where('room_number', '2')->first();
+        $room1 = Room::where('id_kos', $kos1->id)->where('nomor_kamar', '3')->first();
+        $room2 = Room::where('id_kos', $kos2->id)->where('nomor_kamar', '5')->first();
+        $room3 = Room::where('id_kos', $kos1->id)->where('nomor_kamar', '7')->first();
+        $room4 = Room::where('id_kos', $kos4->id)->where('nomor_kamar', '2')->first();
 
         // Booking 1
         Booking::create([
             'id' => Str::uuid(),
-            'booking_id' => 'BK001',
-            'user_id' => $lekok->id,
-            'room_id' => $room1->id,
-            'kos_id' => $kos1->id,
-            'start_date' => '2025-01-15',
-            'duration_years' => 1,
-            'end_date' => '2026-01-15',
-            'total_price' => 7000000,
+            'id_pemesanan' => 'BK001',
+            'id_pengguna' => $lekok->id,
+            'id_kamar' => $room1->id,
+            'id_kos' => $kos1->id,
+            'tanggal_mulai' => '2025-01-15',
+            'durasi_tahun' => 1,
+            'tanggal_selesai' => '2026-01-15',
+            'total_harga' => 7000000,
             'status' => 'CONFIRMED',
         ]);
 
         // Booking 2
         Booking::create([
             'id' => Str::uuid(),
-            'booking_id' => 'BK002',
-            'user_id' => $lifia->id,
-            'room_id' => $room2->id,
-            'kos_id' => $kos2->id,
-            'start_date' => '2025-02-01',
-            'duration_years' => 2,
-            'end_date' => '2027-02-01',
-            'total_price' => 14000000,
+            'id_pemesanan' => 'BK002',
+            'id_pengguna' => $lifia->id,
+            'id_kamar' => $room2->id,
+            'id_kos' => $kos2->id,
+            'tanggal_mulai' => '2025-02-01',
+            'durasi_tahun' => 2,
+            'tanggal_selesai' => '2027-02-01',
+            'total_harga' => 14000000,
             'status' => 'PENDING',
         ]);
 
         // Booking 3
         Booking::create([
             'id' => Str::uuid(),
-            'booking_id' => 'BK003',
-            'user_id' => $muhammad->id,
-            'room_id' => $room3->id,
-            'kos_id' => $kos1->id,
-            'start_date' => '2024-12-20',
-            'duration_years' => 1,
-            'end_date' => '2025-12-20',
-            'total_price' => 7000000,
+            'id_pemesanan' => 'BK003',
+            'id_pengguna' => $muhammad->id,
+            'id_kamar' => $room3->id,
+            'id_kos' => $kos1->id,
+            'tanggal_mulai' => '2024-12-20',
+            'durasi_tahun' => 1,
+            'tanggal_selesai' => '2025-12-20',
+            'total_harga' => 7000000,
             'status' => 'COMPLETED',
         ]);
 
         // Booking 4
         Booking::create([
             'id' => Str::uuid(),
-            'booking_id' => 'BK004',
-            'user_id' => $lekok->id,
-            'room_id' => $room4->id,
-            'kos_id' => $kos4->id,
-            'start_date' => '2025-03-10',
-            'duration_years' => 1,
-            'end_date' => '2026-03-10',
-            'total_price' => 6500000,
+            'id_pemesanan' => 'BK004',
+            'id_pengguna' => $lekok->id,
+            'id_kamar' => $room4->id,
+            'id_kos' => $kos4->id,
+            'tanggal_mulai' => '2025-03-10',
+            'durasi_tahun' => 1,
+            'tanggal_selesai' => '2026-03-10',
+            'total_harga' => 6500000,
             'status' => 'CONFIRMED',
         ]);
     }

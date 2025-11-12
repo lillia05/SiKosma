@@ -11,10 +11,12 @@ class KosImage extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'foto_kos';
+
     protected $fillable = [
-        'kos_id',
-        'image_url',
-        'image_type',
+        'id_kos',
+        'url_gambar',
+        'tipe_gambar',
     ];
 
     /**
@@ -22,7 +24,20 @@ class KosImage extends Model
      */
     public function kos()
     {
-        return $this->belongsTo(Kos::class);
+        return $this->belongsTo(Kos::class, 'id_kos');
+    }
+
+    /**
+     * Accessor untuk kompatibilitas
+     */
+    public function getImageTypeAttribute()
+    {
+        return $this->attributes['tipe_gambar'] ?? 'general';
+    }
+
+    public function setImageTypeAttribute($value)
+    {
+        $this->attributes['tipe_gambar'] = $value;
     }
 
     /**
@@ -30,7 +45,7 @@ class KosImage extends Model
      */
     public function getUrlAttribute()
     {
-        $value = $this->attributes['image_url'];
+        $value = $this->attributes['url_gambar'];
         
         // Jika sudah berupa URL lengkap, kembalikan seperti semula
         if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -43,7 +58,7 @@ class KosImage extends Model
         }
 
         // Kembalikan placeholder jika gambar tidak ada
-        return 'https://via.placeholder.com/400x300?text=' . urlencode($this->kos->name ?? 'Kos Image');
+        return 'https://via.placeholder.com/400x300?text=' . urlencode($this->kos->nama ?? 'Kos Image');
     }
 
     /**
@@ -51,7 +66,7 @@ class KosImage extends Model
      */
     public function getPathAttribute()
     {
-        return 'kos-images/' . $this->attributes['image_url'];
+        return 'kos-images/' . $this->attributes['url_gambar'];
     }
 }
 

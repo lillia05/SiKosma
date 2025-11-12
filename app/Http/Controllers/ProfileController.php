@@ -33,33 +33,33 @@ class ProfileController extends Controller
             'address' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:100',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'bank_name' => $user->role === 'pemilik' ? 'required|string|max:255' : 'nullable',
-            'account_number' => $user->role === 'pemilik' ? 'required|string|max:255' : 'nullable',
+            'bank_name' => $user->peran === 'pemilik' ? 'required|string|max:255' : 'nullable',
+            'account_number' => $user->peran === 'pemilik' ? 'required|string|max:255' : 'nullable',
         ]);
 
         // Update data user
-        $user->name = $request->name;
+        $user->nama = $request->name;
         $user->email = $request->email;
-        $user->phone = $request->phone;
-        $user->address = $request->address;
-        $user->city = $request->city;
+        $user->telepon = $request->phone;
+        $user->alamat = $request->address;
+        $user->kota = $request->city;
 
         // Update bank info untuk pemilik
-        if ($user->role === 'pemilik') {
-            $user->bank_name = $request->bank_name;
-            $user->account_number = $request->account_number;
+        if ($user->peran === 'pemilik') {
+            $user->nama_bank = $request->bank_name;
+            $user->nomor_rekening = $request->account_number;
         }
 
         // Handle upload foto profile
         if ($request->hasFile('profile_photo')) {
             // Hapus foto lama jika ada
-            if ($user->profile_photo) {
-                ImageController::deleteImage($user->profile_photo, 'profile-photos');
+            if ($user->foto_profil) {
+                ImageController::deleteImage($user->foto_profil, 'profile-photos');
             }
 
             // Upload foto baru
             $filename = ImageController::uploadImage($request->file('profile_photo'), 'profile-photos', 'profile');
-            $user->profile_photo = $filename;
+            $user->foto_profil = $filename;
         }
 
         $user->save();

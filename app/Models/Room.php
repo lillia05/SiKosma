@@ -11,26 +11,41 @@ class Room extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    protected $table = 'kamar';
+
     protected $fillable = [
-        'kos_id',
-        'room_number',
-        'price_per_year',
-        'room_size',
-        'facilities',
+        'id_kos',
+        'nomor_kamar',
+        'harga_per_tahun',
+        'ukuran_kamar',
+        'fasilitas',
         'status',
     ];
 
     protected $casts = [
-        'price_per_year' => 'decimal:2',
-        'room_size' => 'decimal:2',
+        'harga_per_tahun' => 'decimal:2',
+        'ukuran_kamar' => 'decimal:2',
     ];
+
+    /**
+     * Accessor untuk kompatibilitas
+     */
+    public function getPricePerYearAttribute()
+    {
+        return $this->attributes['harga_per_tahun'] ?? null;
+    }
+
+    public function setPricePerYearAttribute($value)
+    {
+        $this->attributes['harga_per_tahun'] = $value;
+    }
 
     /**
      * Ambil kos yang memiliki kamar ini.
      */
     public function kos()
     {
-        return $this->belongsTo(Kos::class);
+        return $this->belongsTo(Kos::class, 'id_kos');
     }
 
     /**
@@ -38,7 +53,7 @@ class Room extends Model
      */
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class, 'id_kamar');
     }
 }
 

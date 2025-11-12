@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kos_images', function (Blueprint $table) {
+        Schema::create('foto_kos', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('kos_id');
-            $table->string('image_url');
-            $table->string('image_type')->default('general');
+            $table->uuid('id_kos');
+            $table->string('url_gambar');
+            $table->string('tipe_gambar')->default('general');
             $table->timestamps();
             
-            $table->foreign('kos_id')->references('id')->on('kos')->onDelete('cascade');
-            $table->index('kos_id');
+            $table->foreign('id_kos')->references('id')->on('kos')->onDelete('cascade');
+            $table->index('id_kos');
 });
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kos_images');
+        Schema::dropIfExists('foto_kos');
     }
 };

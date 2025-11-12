@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('notifikasi', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id');
-            $table->string('title');
-            $table->text('message');
-            $table->enum('type', ['booking', 'payment', 'verification', 'system'])->default('system');
-            $table->string('related_id')->nullable();
-            $table->boolean('is_read')->default(false);
-            $table->timestamp('read_at')->nullable();
+            $table->uuid('id_pengguna');
+            $table->string('judul');
+            $table->text('pesan');
+            $table->enum('tipe', ['booking', 'payment', 'verification', 'system'])->default('system');
+            $table->string('id_terkait')->nullable();
+            $table->boolean('sudah_dibaca')->default(false);
+            $table->timestamp('dibaca_pada')->nullable();
             $table->timestamps();
             
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->index('user_id');
-            $table->index('is_read');
+            $table->foreign('id_pengguna')->references('id')->on('users')->onDelete('cascade');
+            $table->index('id_pengguna');
+            $table->index('sudah_dibaca');
         });
     }
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('notifikasi');
     }
 };

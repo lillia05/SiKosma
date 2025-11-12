@@ -31,7 +31,7 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->kata_sandi)) {
             return redirect()->route('beranda', ['modal' => 'login', 'role' => $request->role])
                 ->withErrors(['email' => 'Email atau password salah.'])
                 ->withInput($request->only('email', 'role'));
@@ -100,17 +100,17 @@ class AuthController extends Controller
 
         // Buat data user
         $userData = [
-            'name' => $request->name,
+            'nama' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'kata_sandi' => Hash::make($request->password),
+            'peran' => $request->role,
             'status' => 'Aktif',
         ];
 
         // Tambahkan field bank untuk pemilik
         if ($request->role === 'pemilik') {
-            $userData['bank_name'] = $request->bank_name;
-            $userData['account_number'] = $request->account_number;
+            $userData['nama_bank'] = $request->bank_name;
+            $userData['nomor_rekening'] = $request->account_number;
         }
 
         // Buat user dan login - sama seperti method login

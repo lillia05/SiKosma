@@ -12,17 +12,17 @@ class Kos extends Model
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
-        'name',
-        'description',
-        'phone_number',
-        'type',
-        'address',
-        'city',
-        'google_maps_link',
+        'id_pengguna',
+        'nama',
+        'deskripsi',
+        'nomor_telepon',
+        'tipe',
+        'alamat',
+        'kota',
+        'tautan_google_maps',
         'status',
         'rating',
-        'total_reviews',
+        'total_ulasan',
     ];
 
     protected $casts = [
@@ -30,11 +30,64 @@ class Kos extends Model
     ];
 
     /**
+     * Accessor untuk kompatibilitas
+     */
+    public function getNameAttribute()
+    {
+        return $this->attributes['nama'] ?? null;
+    }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['nama'] = $value;
+    }
+
+    public function getTypeAttribute()
+    {
+        return $this->attributes['tipe'] ?? null;
+    }
+
+    public function setTypeAttribute($value)
+    {
+        $this->attributes['tipe'] = $value;
+    }
+
+    public function getAddressAttribute()
+    {
+        return $this->attributes['alamat'] ?? null;
+    }
+
+    public function setAddressAttribute($value)
+    {
+        $this->attributes['alamat'] = $value;
+    }
+
+    public function getCityAttribute()
+    {
+        return $this->attributes['kota'] ?? null;
+    }
+
+    public function setCityAttribute($value)
+    {
+        $this->attributes['kota'] = $value;
+    }
+
+    public function getTotalReviewsAttribute()
+    {
+        return $this->attributes['total_ulasan'] ?? 0;
+    }
+
+    public function setTotalReviewsAttribute($value)
+    {
+        $this->attributes['total_ulasan'] = $value;
+    }
+
+    /**
      * Ambil user yang memiliki kos ini.
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_pengguna');
     }
 
     /**
@@ -42,7 +95,7 @@ class Kos extends Model
      */
     public function rooms()
     {
-        return $this->hasMany(Room::class);
+        return $this->hasMany(Room::class, 'id_kos');
     }
 
     /**
@@ -50,7 +103,7 @@ class Kos extends Model
      */
     public function images()
     {
-        return $this->hasMany(KosImage::class);
+        return $this->hasMany(KosImage::class, 'id_kos');
     }
 
     /**
@@ -58,7 +111,7 @@ class Kos extends Model
      */
     public function bookings()
     {
-        return $this->hasMany(Booking::class);
+        return $this->hasMany(Booking::class, 'id_kos');
     }
 }
 

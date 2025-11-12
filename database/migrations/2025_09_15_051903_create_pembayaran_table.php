@@ -11,24 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('pembayaran', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('booking_id');
-            $table->uuid('user_id');
-            $table->decimal('amount', 12, 2);
-            $table->enum('payment_method', ['Transfer Bank', 'E-Wallet'])->default('Transfer Bank');
-            $table->string('sender_bank_name');
-            $table->string('sender_account_number');
-            $table->string('sender_name');
-            $table->string('proof_image_url')->nullable();
+            $table->uuid('id_pemesanan');
+            $table->uuid('id_pengguna');
+            $table->decimal('jumlah', 12, 2);
+            $table->enum('metode_pembayaran', ['Transfer Bank', 'E-Wallet'])->default('Transfer Bank');
+            $table->string('nama_bank_pengirim');
+            $table->string('nomor_rekening_pengirim');
+            $table->string('nama_pengirim');
+            $table->string('url_bukti_gambar')->nullable();
             $table->enum('status', ['Pending', 'Verified', 'Rejected'])->default('Pending');
             $table->timestamps();
             $table->softDeletes();
             
-            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->index('booking_id');
-            $table->index('user_id');
+            $table->foreign('id_pemesanan')->references('id')->on('pemesanan')->onDelete('cascade');
+            $table->foreign('id_pengguna')->references('id')->on('users')->onDelete('cascade');
+            $table->index('id_pemesanan');
+            $table->index('id_pengguna');
             $table->index('status');
         });
     }
@@ -38,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('pembayaran');
     }
 };

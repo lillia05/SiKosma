@@ -11,20 +11,22 @@ class Payment extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
+    protected $table = 'pembayaran';
+
     protected $fillable = [
-        'booking_id',
-        'user_id',
-        'amount',
-        'payment_method',
-        'sender_bank_name',
-        'sender_account_number',
-        'sender_name',
-        'proof_image_url',
+        'id_pemesanan',
+        'id_pengguna',
+        'jumlah',
+        'metode_pembayaran',
+        'nama_bank_pengirim',
+        'nomor_rekening_pengirim',
+        'nama_pengirim',
+        'url_bukti_gambar',
         'status',
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'jumlah' => 'decimal:2',
     ];
 
     /**
@@ -32,7 +34,7 @@ class Payment extends Model
      */
     public function booking()
     {
-        return $this->belongsTo(Booking::class);
+        return $this->belongsTo(Booking::class, 'id_pemesanan');
     }
 
     /**
@@ -40,7 +42,7 @@ class Payment extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_pengguna');
     }
 }
 

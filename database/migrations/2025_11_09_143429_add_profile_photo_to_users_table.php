@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('profile_photo')->nullable()->after('account_number');
+            $table->string('foto_profil')->nullable()->after('nomor_rekening');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('profile_photo');
+            $table->dropColumn('foto_profil');
         });
     }
 };

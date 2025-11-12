@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('activity_logs', function (Blueprint $table) {
+        Schema::create('log_aktivitas', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id')->nullable();
-            $table->string('action');
-            $table->string('model_type');
-            $table->uuid('model_id');
-            $table->text('description')->nullable();
-            $table->json('changes')->nullable();
-            $table->string('ip_address')->nullable();
+            $table->uuid('id_pengguna')->nullable();
+            $table->string('aksi');
+            $table->string('tipe_model');
+            $table->uuid('id_model');
+            $table->text('deskripsi')->nullable();
+            $table->json('perubahan')->nullable();
+            $table->string('alamat_ip')->nullable();
             $table->timestamps();
             
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-            $table->index('user_id');
-            $table->index(['model_type', 'model_id']);
+            $table->foreign('id_pengguna')->references('id')->on('users')->onDelete('set null');
+            $table->index('id_pengguna');
+            $table->index(['tipe_model', 'id_model']);
         });
     }
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('activity_logs');
+        Schema::dropIfExists('log_aktivitas');
     }
 };
