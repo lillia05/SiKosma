@@ -28,100 +28,212 @@
     </div>
     
     <!-- Kos Listings -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        @forelse($kosList as $kos)
-            <div class="kos-card">
-                <div class="relative">
-                    @php
-                        $mainImage = $kos->images->where('image_type', 'general')->first();
-                        $imageUrl = $mainImage ? $mainImage->url : 'https://via.placeholder.com/400x200?text=' . urlencode($kos->name);
-                    @endphp
-                    <img src="{{ $imageUrl }}" alt="{{ $kos->name }}" class="kos-image" onerror="this.src='https://via.placeholder.com/400x200?text={{ urlencode($kos->name) }}'">
-                    <div class="absolute top-0 right-0 p-2">
-                        <div class="kos-tag">{{ $kos->city }}</div>
-                        <div class="kos-tag kos-tag-white mt-1">{{ $kos->type }}</div>
-                    </div>
-                </div>
-                <div class="p-4">
-                    <h5 class="font-bold text-primary-blue text-lg mb-2">{{ $kos->name }}</h5>
-                    <p class="text-gray-600 text-sm mb-2">{{ $kos->address }}</p>
-                    <div class="flex items-center mb-2">
-                        <span class="star-rating flex">
-                            @for($i = 1; $i <= 5; $i++)
-                                @if($i <= round($kos->rating))
-                                    <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                    </svg>
-                                @else
-                                    <svg class="w-4 h-4 fill-current text-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                                    </svg>
-                                @endif
-                            @endfor
-                        </span>
-                        <span class="ml-2 text-gray-600 text-sm">{{ number_format($kos->rating, 1) }} / 5 ({{ $kos->total_reviews }})</span>
-                    </div>
-                    @php
-                        $availableRooms = $kos->rooms->where('status', 'Tersedia')->count();
-                        $minPrice = $kos->rooms->where('status', 'Tersedia')->min('price_per_year');
-                    @endphp
-                    @if($minPrice)
-                        <p class="font-bold text-primary-blue mb-1">Rp{{ number_format($minPrice, 0, ',', '.') }} / Tahun</p>
-                    @endif
-                    <p class="text-gray-600 text-sm mb-3">Jumlah Kamar Tersedia: {{ $availableRooms }}</p>
-                    <a href="#" class="btn-blue w-full text-center block no-underline">Lihat Detail</a>
-                </div>
-            </div>
-        @empty
-            <div class="col-span-full text-center py-12">
-                <p class="text-gray-600">Tidak ada kos yang ditemukan.</p>
-            </div>
-        @endforelse
+    <div id="kosListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @include('partials.kos-list')
     </div>
     
     <!-- Pagination -->
-    @if($kosList->hasPages())
-        <div class="flex justify-center mt-6">
-            {{ $kosList->links() }}
-        </div>
-    @endif
+    <div id="paginationContainer">
+        @include('partials.pagination')
+    </div>
 </div>
 
 <script>
-    function performSearch() {
-        const search = document.getElementById('searchInput').value;
-        const url = new URL(window.location.href);
-        if (search) {
-            url.searchParams.set('search', search);
-        } else {
-            url.searchParams.delete('search');
-        }
-        window.location.href = url.toString();
-    }
-    
-    document.getElementById('searchInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            performSearch();
-        }
+    let searchTimeout;
+    const searchInput = document.getElementById('searchInput');
+    const kosListContainer = document.getElementById('kosListContainer');
+    const paginationContainer = document.getElementById('paginationContainer');
+    let currentFilters = {
+        search: '{{ request('search') }}',
+        lokasi: '{{ request('lokasi') }}',
+        type: '{{ request('type') }}'
+    };
+
+    // Real-time search dengan debounce (500ms)
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const searchValue = this.value.trim();
+        
+        searchTimeout = setTimeout(() => {
+            currentFilters.search = searchValue;
+            performAjaxSearch();
+        }, 500);
     });
-    
+
+    // Search saat Enter atau klik tombol
+    function performSearch() {
+        const search = searchInput.value.trim();
+        currentFilters.search = search;
+        performAjaxSearch();
+    }
+
+    // AJAX Search
+    function performAjaxSearch() {
+        const params = new URLSearchParams();
+        
+        if (currentFilters.search) {
+            params.set('search', currentFilters.search);
+        }
+        if (currentFilters.lokasi) {
+            params.set('lokasi', currentFilters.lokasi);
+        }
+        if (currentFilters.type) {
+            params.set('type', currentFilters.type);
+        }
+
+        // Update URL tanpa reload
+        const newUrl = '{{ route("beranda") }}' + (params.toString() ? '?' + params.toString() : '');
+        window.history.pushState({}, '', newUrl);
+
+        // Show loading
+        kosListContainer.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-12"><p class="text-gray-600">Mencari...</p></div>';
+        paginationContainer.innerHTML = '';
+
+        // AJAX Request
+        fetch(newUrl, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            kosListContainer.innerHTML = data.html;
+            paginationContainer.innerHTML = data.pagination;
+            
+            // Re-attach pagination links untuk AJAX
+            attachPaginationListeners();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            kosListContainer.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-12"><p class="text-red-600">Terjadi kesalahan saat mencari.</p></div>';
+        });
+    }
+
+    // Filter by location
     function filterByLocation(location) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('lokasi', location);
-        url.searchParams.delete('type');
-        window.location.href = url.toString();
+        // Toggle filter
+        if (currentFilters.lokasi === location) {
+            currentFilters.lokasi = '';
+        } else {
+            currentFilters.lokasi = location;
+            currentFilters.type = ''; // Remove type filter
+        }
+        
+        // Update button states
+        updateFilterButtons();
+        performAjaxSearch();
     }
-    
+
+    // Filter by type
     function filterByType(type) {
-        const url = new URL(window.location.href);
-        url.searchParams.set('type', type);
-        url.searchParams.delete('lokasi');
-        window.location.href = url.toString();
+        // Toggle filter
+        if (currentFilters.type === type) {
+            currentFilters.type = '';
+        } else {
+            currentFilters.type = type;
+            currentFilters.lokasi = ''; // Remove location filter
+        }
+        
+        // Update button states
+        updateFilterButtons();
+        performAjaxSearch();
     }
-    
+
+    // Clear all filters
     function clearFilters() {
-        window.location.href = '{{ route("beranda") }}';
+        currentFilters = {
+            search: '',
+            lokasi: '',
+            type: ''
+        };
+        searchInput.value = '';
+        updateFilterButtons();
+        performAjaxSearch();
     }
+
+    // Update filter button states
+    function updateFilterButtons() {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.classList.add('inactive');
+        });
+
+        // Activate "Semua" if no filters
+        if (!currentFilters.lokasi && !currentFilters.type) {
+            document.querySelector('.filter-btn[onclick="clearFilters()"]')?.classList.remove('inactive');
+            document.querySelector('.filter-btn[onclick="clearFilters()"]')?.classList.add('active');
+        }
+
+        // Activate location filter
+        if (currentFilters.lokasi) {
+            const locationBtn = Array.from(document.querySelectorAll('.filter-btn')).find(btn => 
+                btn.textContent.trim() === currentFilters.lokasi
+            );
+            if (locationBtn) {
+                locationBtn.classList.remove('inactive');
+                locationBtn.classList.add('active');
+            }
+        }
+
+        // Activate type filter
+        if (currentFilters.type) {
+            const typeBtn = Array.from(document.querySelectorAll('.filter-btn')).find(btn => 
+                btn.textContent.trim() === 'Kos ' + currentFilters.type
+            );
+            if (typeBtn) {
+                typeBtn.classList.remove('inactive');
+                typeBtn.classList.add('active');
+            }
+        }
+    }
+
+    // Attach pagination listeners untuk AJAX
+    function attachPaginationListeners() {
+        document.querySelectorAll('#paginationContainer a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const url = new URL(this.href);
+                const search = url.searchParams.get('search');
+                const lokasi = url.searchParams.get('lokasi');
+                const type = url.searchParams.get('type');
+                
+                if (search) currentFilters.search = search;
+                if (lokasi) currentFilters.lokasi = lokasi;
+                if (type) currentFilters.type = type;
+                
+                fetch(this.href, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    kosListContainer.innerHTML = data.html;
+                    paginationContainer.innerHTML = data.pagination;
+                    attachPaginationListeners();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        updateFilterButtons();
+        attachPaginationListeners();
+        
+        // Enter key untuk search
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+    });
 </script>
 @endsection
 

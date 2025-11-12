@@ -28,8 +28,9 @@
                 @endauth
                 
                 @auth
-                    <div class="relative group">
-                        <a href="#" class="flex items-center gap-2 text-primary-blue font-medium no-underline text-base cursor-pointer" onclick="event.preventDefault(); document.getElementById('profileDropdown').classList.toggle('hidden');">
+                    <!-- Profile Icon dengan Dropdown -->
+                    <div class="relative" id="profileDropdownContainer">
+                        <button type="button" id="profileDropdownButton" class="flex items-center gap-2 text-primary-blue font-medium text-base cursor-pointer focus:outline-none">
                             @if(Auth::user()->profile_photo_url)
                                 <img src="{{ Auth::user()->profile_photo_url }}" alt="Profile" class="rounded-full w-8 h-8 object-cover">
                             @else
@@ -37,13 +38,30 @@
                                     {{ mb_substr(Auth::user()->name, 0, 1) }}
                                 </div>
                             @endif
-                        </a>
-                        <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                            <a href="{{ route('beranda', ['modal' => 'profile']) }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 no-underline">Profil</a>
-                            <hr class="my-2">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200">
+                            <a href="{{ route('beranda', ['modal' => 'profile']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 no-underline">
+                                <div class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    <span>Profil</span>
+                                </div>
+                            </a>
+                            <hr class="my-1 border-gray-200">
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">Keluar</button>
+                                <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                    <div class="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        <span>Keluar</span>
+                                    </div>
+                                </button>
                             </form>
                         </div>
                     </div>

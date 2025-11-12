@@ -32,6 +32,35 @@
     @endauth
     
     @yield('scripts')
+    
+    <script>
+        // Profile Dropdown Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileDropdownButton = document.getElementById('profileDropdownButton');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const profileDropdownContainer = document.getElementById('profileDropdownContainer');
+            
+            if (profileDropdownButton && profileDropdown) {
+                // Toggle dropdown on button click
+                profileDropdownButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('hidden');
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (profileDropdownContainer && !profileDropdownContainer.contains(event.target)) {
+                        profileDropdown.classList.add('hidden');
+                    }
+                });
+                
+                // Prevent dropdown from closing when clicking inside
+                profileDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

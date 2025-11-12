@@ -17,27 +17,35 @@ class BerandaController extends Controller
                 $q->where('status', 'Tersedia');
             }, 'images']);
 
-        // Pencarian
+        // Pencarian (case-insensitive dan partial match)
         if ($request->has('search') && $request->search) {
-            $search = $request->search;
+            $search = trim($request->search);
             $query->where(function($q) use ($search) {
-                $q->where('nama', 'like', "%{$search}%")
-                  ->orWhere('alamat', 'like', "%{$search}%")
-                  ->orWhere('kota', 'like', "%{$search}%");
+                $q->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(alamat) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(kota) LIKE ?', ['%' . strtolower($search) . '%']);
             });
         }
 
-        // Filter berdasarkan lokasi (kota/daerah)
+        // Filter berdasarkan lokasi (kota/daerah) - case-insensitive
         if ($request->has('lokasi') && $request->lokasi) {
-            $query->where('kota', $request->lokasi);
+            $query->whereRaw('LOWER(kota) = ?', [strtolower($request->lokasi)]);
         }
 
-        // Filter berdasarkan tipe
+        // Filter berdasarkan tipe - case-insensitive
         if ($request->has('type') && $request->type) {
-            $query->where('tipe', $request->type);
+            $query->whereRaw('LOWER(tipe) = ?', [strtolower($request->type)]);
         }
 
         $kosList = $query->paginate(12);
+
+        // Jika request AJAX, return JSON
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('partials.kos-list', compact('kosList'))->render(),
+                'pagination' => view('partials.pagination', compact('kosList'))->render(),
+            ]);
+        }
 
         return view('beranda', compact('kosList'));
     }
