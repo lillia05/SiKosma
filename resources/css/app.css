@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    * {
+        @apply font-poppins;
+    }
+    
+    body {
+        @apply bg-gray-100 min-h-screen flex flex-col;
+    }
+    
+    main {
+        @apply flex-1;
+    }
+}
+
+@layer components {
+    .btn-yellow {
+        @apply bg-primary-yellow text-black border-none px-6 py-2 rounded-lg font-medium hover:bg-yellow-500 transition-colors;
+    }
+    
+    .btn-blue {
+        @apply bg-primary-blue text-white border-none px-6 py-2 rounded-lg font-medium hover:bg-blue-900 transition-colors;
+    }
+    
+    .search-bar {
+        @apply border-2 border-primary-blue rounded-lg px-5 py-3 focus:outline-none focus:ring-2 focus:ring-primary-blue;
+    }
+    
+    .filter-btn {
+        @apply px-5 py-2.5 rounded-lg font-medium transition-colors;
+    }
+    
+    .filter-btn.active {
+        @apply bg-primary-yellow text-black;
+    }
+    
+    .filter-btn.inactive {
+        @apply bg-white border-2 border-primary-yellow text-black hover:bg-yellow-50;
+    }
+    
+    .kos-card {
+        @apply bg-white rounded-xl shadow-md overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-lg;
+    }
+    
+    .kos-image {
+        @apply w-full h-48 object-cover;
+    }
+    
+    .kos-tag {
+        @apply bg-primary-yellow text-black px-3 py-1 rounded-md text-xs font-medium;
+    }
+    
+    .kos-tag-white {
+        @apply bg-white border-2 border-primary-yellow text-black;
+    }
+    
+    .star-rating {
+        @apply text-primary-yellow;
+    }
+    
+    .footer {
+        @apply bg-white py-5 mt-auto w-full;
+    }
+    
+    .nav-link {
+        @apply text-primary-blue font-medium no-underline hover:underline;
+    }
+}
+
