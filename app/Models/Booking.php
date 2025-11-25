@@ -62,5 +62,13 @@ class Booking extends Model
     {
         return $this->hasOne(Payment::class, 'id_pemesanan');
     }
+
+    /**
+     * Ambil ulasan untuk pemesanan ini.
+     */
+    public function ulasan()
+    {
+        return $this->hasOne(Ulasan::class, 'id_pemesanan');
+    }
 }
 

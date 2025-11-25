@@ -41,6 +41,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::get('/riwayat', [App\Http\Controllers\RiwayatController::class, 'index'])->name('riwayat.index');
+
+    // Routes ulasan
+    Route::get('/kos/{id}/ulasan/create', [App\Http\Controllers\UlasanController::class, 'create'])->name('ulasan.create');
+    Route::post('/kos/{id}/ulasan', [App\Http\Controllers\UlasanController::class, 'store'])->name('ulasan.store');
+
+
 });
 
 

@@ -91,6 +91,27 @@ class Kos extends Model
     }
 
     /**
+     * Ambil ulasan untuk kos ini.
+     */
+    public function ulasan()
+    {
+        return $this->hasMany(Ulasan::class, 'id_kos');
+    }
+
+    /**
+     * Update rating kos secara otomatis dari ulasan.
+     */
+    public function updateRating()
+    {
+        $ulasan = $this->ulasan;
+        if ($ulasan->count() > 0) {
+            $this->rating = round($ulasan->avg('rating'), 1);
+            $this->total_ulasan = $ulasan->count();
+            $this->save();
+        }
+    }
+
+    /**
      * Ambil kamar untuk kos ini.
      */
     public function rooms()
