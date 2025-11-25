@@ -39,8 +39,10 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Routes profile (terautentikasi)
 Route::middleware('auth')->group(function () {
-Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/riwayat', [App\Http\Controllers\RiwayatController::class, 'index'])->name('riwayat.index');
 });
+
 
 // Routes pencari (terautentikasi)
 Route::middleware(['auth', 'auth.role:pencari'])->prefix('pencari')->name('pencari.')->group(function () {
