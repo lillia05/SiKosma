@@ -67,6 +67,15 @@ Route::middleware(['auth', 'auth.role:admin'])->prefix('admin')->name('admin.')-
     Route::get('/dashboard', function() {
         return redirect()->route('beranda')->with('info', 'Dashboard Admin akan segera hadir!');
     })->name('dashboard');
+    Route::get('/verifikasi-kos', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'index'])->name('verifikasi-kos');
+    Route::get('/verifikasi-kos/{id}/detail', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'detail'])->name('verifikasi-kos.detail');
+    Route::post('/verifikasi-kos/{id}/approve', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'approve'])->name('verifikasi-kos.approve');
+    Route::post('/verifikasi-kos/{id}/reject', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'reject'])->name('verifikasi-kos.reject');
+    Route::get('/verifikasi-pembayaran', [App\Http\Controllers\Admin\AdminVerifikasiPembayaranController::class, 'index'])->name('verifikasi-pembayaran');
+    Route::post('/verifikasi-pembayaran/{id}/approve', [App\Http\Controllers\Admin\AdminVerifikasiPembayaranController::class, 'approve'])->name('verifikasi-pembayaran.approve');
+    Route::post('/verifikasi-pembayaran/{id}/reject', [App\Http\Controllers\Admin\AdminVerifikasiPembayaranController::class, 'reject'])->name('verifikasi-pembayaran.reject');
+    Route::get('/verifikasi-pembayaran/{id}/detail', [App\Http\Controllers\Admin\AdminVerifikasiPembayaranController::class, 'detail'])->name('verifikasi-pembayaran.detail');
+
 });
 
 
