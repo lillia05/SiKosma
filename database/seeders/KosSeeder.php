@@ -28,8 +28,8 @@ class KosSeeder extends Seeder
             'kota' => 'Kampung Baru',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
-            'rating' => 4.9,
-            'total_ulasan' => 5,
+            'rating' => 0,
+            'total_ulasan' => 0,
         ]);
 
         // Kos 2 - Kos Putra Kampung Baru
@@ -44,8 +44,8 @@ class KosSeeder extends Seeder
             'kota' => 'Kampung Baru',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
-            'rating' => 4.5,
-            'total_ulasan' => 3,
+            'rating' => 0,
+            'total_ulasan' => 0,
         ]);
 
         // Kos 3 - Kos Putri Melati (Gedong Meneng)
@@ -60,8 +60,8 @@ class KosSeeder extends Seeder
             'kota' => 'Gedong Meneng',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
-            'rating' => 4.8,
-            'total_ulasan' => 8,
+            'rating' => 0,
+            'total_ulasan' => 0,
         ]);
 
         // Kos 4 - Kos Putra Ali (Gedong Meneng)
@@ -76,8 +76,40 @@ class KosSeeder extends Seeder
             'kota' => 'Gedong Meneng',
             'tautan_google_maps' => 'https://maps.google.com',
             'status' => 'Disetujui',
-            'rating' => 4.2,
-            'total_ulasan' => 2,
+            'rating' => 0,
+            'total_ulasan' => 0,
+        ]);
+
+        // Kos 5 - Kos Campur Adam (Kampung Baru)
+        $kos5 = Kos::create([
+            'id' => Str::uuid(),
+            'id_pengguna' => $akmal->id,
+            'nama' => 'Kos Campur Adam',
+            'deskripsi' => 'Kos campur yang nyaman untuk mahasiswa putra dan putri. Lokasi strategis dekat kampus dan pusat perbelanjaan.',
+            'nomor_telepon' => '0821234567',
+            'tipe' => 'Campur',
+            'alamat' => 'Jl. Kampung Baru No. 50',
+            'kota' => 'Kampung Baru',
+            'tautan_google_maps' => 'https://www.google.com/maps?q=Kampung+Baru,+Bandar+Lampung',
+            'status' => 'Disetujui',
+            'rating' => 0,
+            'total_ulasan' => 0,
+        ]);
+
+        // Kos 6 - Kos Putri Aisyah (Status Menunggu - untuk testing verifikasi)
+        $kos6 = Kos::create([
+            'id' => Str::uuid(),
+            'id_pengguna' => $lia->id,
+            'nama' => 'Kos Putri Aisyah',
+            'deskripsi' => 'Kos putri yang baru dibangun dengan fasilitas modern. Kamar berukuran 4 x 3 meter dengan kamar mandi dalam. Lokasi strategis dekat kampus Unila. Fasilitas lengkap termasuk WiFi, parkir, dapur umum, dan keamanan 24 jam.',
+            'nomor_telepon' => '0823234567',
+            'tipe' => 'Putri',
+            'alamat' => 'Jl. Bumi Manti I Gg.Madinah I No. 111 Kampung Baru',
+            'kota' => 'Kampung Baru',
+            'tautan_google_maps' => 'https://maps.google.com',
+            'status' => 'Menunggu',
+            'rating' => 0,
+            'total_ulasan' => 0,
         ]);
     }
 }

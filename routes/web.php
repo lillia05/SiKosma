@@ -20,6 +20,17 @@ use App\Http\Controllers\PencariController;
 Route::get('/', [BerandaController::class, 'index'])->name('beranda');
 Route::get('/tentang', [BerandaController::class, 'tentang'])->name('tentang');
 
+// Routes detail kos dan penyewaan
+Route::get('/kos/{id}', [App\Http\Controllers\KosController::class, 'detail'])->name('kos.detail');
+Route::get('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'booking'])->name('kos.booking');
+Route::post('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'storeBooking'])->name('kos.booking.store');
+
+// Routes pembayaran (perlu login)
+Route::middleware('auth')->group(function () {
+    Route::get('/pembayaran', [App\Http\Controllers\PaymentController::class, 'index'])->name('pembayaran.index');
+    Route::post('/pembayaran', [App\Http\Controllers\PaymentController::class, 'store'])->name('pembayaran.store');
+});
+
 
 // Routes autentikasi
 Route::post('/login', [AuthController::class, 'login'])->name('login');
@@ -49,3 +60,5 @@ Route::middleware(['auth', 'auth.role:admin'])->prefix('admin')->name('admin.')-
         return redirect()->route('beranda')->with('info', 'Dashboard Admin akan segera hadir!');
     })->name('dashboard');
 });
+
+
