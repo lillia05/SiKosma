@@ -53,24 +53,26 @@
                             {{ $statusText }}
                         </span>
                     </td>
-                    <td class="py-3 px-4 text-sm space-x-2">
-                        @if($payment->status === 'Pending')
-                            <form action="{{ route('admin.verifikasi-pembayaran.approve', $payment->id) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition font-poppins btn-approve-payment">
-                                    Setujui
-                                </button>
-                            </form>
-                            <form action="{{ route('admin.verifikasi-pembayaran.reject', $payment->id) }}" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition font-poppins btn-reject-payment">
-                                    Tolak
-                                </button>
-                            </form>
-                        @endif
-                        <a href="{{ route('admin.verifikasi-pembayaran.detail', $payment->id) }}" class="bg-blue-900 text-white px-3 py-1 rounded text-xs hover:bg-blue-800 transition font-poppins inline-block no-underline">
-                            Lihat Detail
-                        </a>
+                    <td class="py-3 px-4 text-sm">
+                        <div class="flex flex-wrap items-center gap-2">
+                            @if($payment->status === 'Pending')
+                                <form action="{{ route('admin.verifikasi-pembayaran.approve', $payment->id) }}" method="POST" class="inline-flex">
+                                    @csrf
+                                    <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded text-xs hover:bg-green-600 transition font-poppins btn-approve-payment">
+                                        Setujui
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.verifikasi-pembayaran.reject', $payment->id) }}" method="POST" class="inline-flex">
+                                    @csrf
+                                    <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600 transition font-poppins btn-reject-payment">
+                                        Tolak
+                                    </button>
+                                </form>
+                            @endif
+                            <a href="{{ route('admin.verifikasi-pembayaran.detail', $payment->id) }}" class="flex items-center justify-center bg-blue-900 text-white px-3 py-1 rounded text-xs hover:bg-blue-800 transition font-poppins no-underline">
+                                Lihat Detail
+                            </a>
+                        </div>
                     </td>
                 </tr>
             @endforeach

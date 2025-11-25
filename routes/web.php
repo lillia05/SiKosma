@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PencariController;
+use App\Http\Controllers\Admin\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,9 +65,7 @@ Route::middleware(['auth', 'auth.role:pemilik'])->prefix('pemilik')->name('pemil
 
 // Routes admin (terautentikasi) - placeholder
 Route::middleware(['auth', 'auth.role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function() {
-        return redirect()->route('beranda')->with('info', 'Dashboard Admin akan segera hadir!');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/verifikasi-kos', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'index'])->name('verifikasi-kos');
     Route::get('/verifikasi-kos/{id}/detail', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'detail'])->name('verifikasi-kos.detail');
     Route::post('/verifikasi-kos/{id}/approve', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'approve'])->name('verifikasi-kos.approve');

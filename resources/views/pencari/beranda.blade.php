@@ -4,11 +4,28 @@
 
 @section('content')
 <div class="container mx-auto my-5 px-2 md:px-4 max-w-7xl">
-    <!-- Welcome Message (hanya untuk user yang sudah login) -->
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <h5 class="font-bold text-lg text-primary-blue mb-1">Selamat Datang, {{ Auth::user()->name }}!</h5>
-        <p class="text-gray-700 mb-0">Temukan kos impian Anda di sini.</p>
-    </div>
+    @auth
+    @if(session('show_payment_notification'))
+        <div id="paymentNotification" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 transition-all duration-500 ease-in-out">
+            <div class="flex items-start gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                <div class="flex-1">
+                    <h5 class="font-bold text-lg text-yellow-800 mb-1">Pembayaran Dikirim</h5>
+                    <p class="text-gray-700 mb-0">{{ session('payment_message', 'Menunggu verifikasi dari admin.') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+    @endauth
+    <!-- Welcome Message (tampilkan setelah login/register saja) -->
+    @if(session('show_welcome_message'))
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h5 class="font-bold text-lg text-primary-blue mb-1">Selamat Datang, {{ Auth::user()->name }}!</h5>
+            <p class="text-gray-700 mb-0">Temukan kos impian Anda di sini.</p>
+        </div>
+    @endif
     
     <!-- Search Section -->
     <div class="mb-6">
@@ -231,6 +248,17 @@
     document.addEventListener('DOMContentLoaded', function() {
         updateFilterButtons();
         attachPaginationListeners();
+
+        const paymentNotification = document.getElementById('paymentNotification');
+        if (paymentNotification) {
+            setTimeout(function() {
+                paymentNotification.style.opacity = '0';
+                paymentNotification.style.transform = 'translateY(-10px)';
+                setTimeout(function() {
+                    paymentNotification.style.display = 'none';
+                }, 500);
+            }, 5000);
+        }
         
         // Enter key untuk search
         searchInput.addEventListener('keypress', function(e) {

@@ -52,6 +52,10 @@ class AuthController extends Controller
 
         Auth::login($user, $request->remember ?? false);
 
+        if (in_array($user->role, ['pencari', 'pemilik'])) {
+            session()->flash('show_welcome_message', true);
+        }
+
         // Redirect berdasarkan role
         if ($user->role === 'admin') {
             return redirect()->route('admin.dashboard');
@@ -117,6 +121,10 @@ class AuthController extends Controller
         $user = User::create($userData);
         
         Auth::login($user);
+
+        if (in_array($request->role, ['pencari', 'pemilik'])) {
+            session()->flash('show_welcome_message', true);
+        }
 
         // Redirect berdasarkan role - sama seperti login
         if ($request->role === 'pemilik') {

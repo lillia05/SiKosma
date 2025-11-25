@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Payment extends Model
 {
@@ -34,7 +35,7 @@ class Payment extends Model
      */
     public function booking()
     {
-        return $this->belongsTo(Booking::class, 'id_pemesanan');
+        return $this->belongsTo(Booking::class, 'id_pemesanan', 'id');
     }
 
     /**
@@ -43,6 +44,30 @@ class Payment extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'id_pengguna');
+    }
+
+    /**
+     * Ambil URL lengkap untuk bukti pembayaran.
+     */
+    public function getProofImageUrlAttribute()
+    {
+        $value = $this->attributes['url_bukti_gambar'] ?? null;
+        
+        if (!$value) {
+            return null;
+        }
+
+        // Jika sudah berupa URL lengkap, kembalikan seperti semula
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+
+        // Cek apakah file ada di storage
+        if (Storage::disk('public')->exists('payment-proofs/' . $value)) {
+            return Storage::disk('public')->url('payment-proofs/' . $value);
+        }
+
+        return null;
     }
 }
 
