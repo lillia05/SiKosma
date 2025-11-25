@@ -75,7 +75,9 @@ Route::middleware(['auth', 'auth.role:admin'])->prefix('admin')->name('admin.')-
     Route::post('/verifikasi-pembayaran/{id}/approve', [App\Http\Controllers\Admin\AdminVerifikasiPembayaranController::class, 'approve'])->name('verifikasi-pembayaran.approve');
     Route::post('/verifikasi-pembayaran/{id}/reject', [App\Http\Controllers\Admin\AdminVerifikasiPembayaranController::class, 'reject'])->name('verifikasi-pembayaran.reject');
     Route::get('/verifikasi-pembayaran/{id}/detail', [App\Http\Controllers\Admin\AdminVerifikasiPembayaranController::class, 'detail'])->name('verifikasi-pembayaran.detail');
-
+    Route::get('/manajemen-pengguna', [App\Http\Controllers\Admin\AdminManajemenPenggunaController::class, 'index'])->name('manajemen-pengguna');
+    Route::put('/manajemen-pengguna/{id}/status', [App\Http\Controllers\Admin\AdminManajemenPenggunaController::class, 'updateStatus'])->name('manajemen-pengguna.update-status');
+    Route::delete('/manajemen-pengguna/{id}', [App\Http\Controllers\Admin\AdminManajemenPenggunaController::class, 'destroy'])->name('manajemen-pengguna.destroy');
 });
 
 
