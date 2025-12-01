@@ -56,11 +56,9 @@ Route::middleware(['auth', 'auth.role:pencari'])->prefix('pencari')->name('penca
     Route::get('/beranda', [PencariController::class, 'beranda'])->name('beranda');
 });
 
-// Routes pemilik (terautentikasi) - placeholder
+// Routes pemilik (terautentikasi)
 Route::middleware(['auth', 'auth.role:pemilik'])->prefix('pemilik')->name('pemilik.')->group(function () {
-    Route::get('/dashboard', function() {
-        return redirect()->route('beranda')->with('info', 'Dashboard Pemilik akan segera hadir!');
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\PemilikController::class, 'dashboard'])->name('dashboard');
 });
 
 // Routes admin (terautentikasi) - placeholder

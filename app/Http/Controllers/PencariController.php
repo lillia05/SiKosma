@@ -14,7 +14,17 @@ class PencariController extends Controller
     {
         $query = Kos::where('status', 'Disetujui')
             ->with(['rooms' => function($q) {
-                $q->where('status', 'Tersedia');
+                // Hanya tampilkan kamar yang tersedia (tidak ada booking aktif)
+                $q->where('status', 'Tersedia')
+                  ->whereDoesntHave('bookings', function($query) {
+                      // Tidak ada booking CONFIRMED dengan payment Verified yang masih aktif
+                      $query->where('status', 'CONFIRMED')
+                            ->whereHas('payment', function($paymentQuery) {
+                                $paymentQuery->where('status', 'Verified');
+                            })
+                            ->where('tanggal_mulai', '<=', now())
+                            ->where('tanggal_selesai', '>=', now());
+                  });
             }, 'images']);
 
         // Pencarian (case-insensitive dan partial match)

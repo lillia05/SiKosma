@@ -17,7 +17,18 @@ class KosController extends Controller
     public function detail($id)
     {
         $kos = Kos::with(['rooms' => function($q) {
-            $q->where('status', 'Tersedia');
+            // Hanya tampilkan kamar yang tersedia
+            // Kamar tersedia jika status = 'Tersedia' DAN tidak ada booking aktif
+            $q->where('status', 'Tersedia')
+              ->whereDoesntHave('bookings', function($query) {
+                  // Tidak ada booking CONFIRMED dengan payment Verified yang masih aktif
+                  $query->where('status', 'CONFIRMED')
+                        ->whereHas('payment', function($paymentQuery) {
+                            $paymentQuery->where('status', 'Verified');
+                        })
+                        ->where('tanggal_mulai', '<=', now())
+                        ->where('tanggal_selesai', '>=', now());
+              });
         }, 'images', 'user', 'ulasan.user'])
         ->where('status', 'Disetujui')
         ->findOrFail($id);
@@ -50,7 +61,18 @@ class KosController extends Controller
     public function booking($id, Request $request)
     {
         $kos = Kos::with(['rooms' => function($q) {
-            $q->where('status', 'Tersedia');
+            // Hanya tampilkan kamar yang tersedia
+            // Kamar tersedia jika status = 'Tersedia' DAN tidak ada booking aktif
+            $q->where('status', 'Tersedia')
+              ->whereDoesntHave('bookings', function($query) {
+                  // Tidak ada booking CONFIRMED dengan payment Verified yang masih aktif
+                  $query->where('status', 'CONFIRMED')
+                        ->whereHas('payment', function($paymentQuery) {
+                            $paymentQuery->where('status', 'Verified');
+                        })
+                        ->where('tanggal_mulai', '<=', now())
+                        ->where('tanggal_selesai', '>=', now());
+              });
         }, 'images'])
         ->where('status', 'Disetujui')
         ->findOrFail($id);
@@ -82,9 +104,20 @@ class KosController extends Controller
         ]);
 
         $kos = Kos::where('status', 'Disetujui')->findOrFail($id);
+        
+        // Validasi kamar tersedia dan tidak ada booking aktif
         $room = Room::where('id_kos', $kos->id)
             ->where('id', $request->id_kamar)
             ->where('status', 'Tersedia')
+            ->whereDoesntHave('bookings', function($query) {
+                // Tidak ada booking CONFIRMED dengan payment Verified yang masih aktif
+                $query->where('status', 'CONFIRMED')
+                      ->whereHas('payment', function($paymentQuery) {
+                          $paymentQuery->where('status', 'Verified');
+                      })
+                      ->where('tanggal_mulai', '<=', now())
+                      ->where('tanggal_selesai', '>=', now());
+            })
             ->firstOrFail();
 
         // Hitung total harga

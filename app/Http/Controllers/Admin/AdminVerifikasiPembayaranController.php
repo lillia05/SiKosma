@@ -53,9 +53,15 @@ class AdminVerifikasiPembayaranController extends Controller
         if ($payment->booking) {
             $payment->booking->status = 'CONFIRMED';
             $payment->booking->save();
+            
+            // Update status kamar menjadi Terisi
+            if ($payment->booking->room) {
+                $payment->booking->room->status = 'Terisi';
+                $payment->booking->room->save();
+            }
         }
 
-        // Buat notifikasi untuk user
+        // Buat notifikasi untuk user (pencari)
         NotificationHelper::create(
             $payment->id_pengguna,
             'Pembayaran Disetujui',
@@ -63,6 +69,17 @@ class AdminVerifikasiPembayaranController extends Controller
             'payment',
             $payment->id
         );
+
+        // Buat notifikasi untuk pemilik kos
+        if ($payment->booking && $payment->booking->kos && $payment->booking->kos->id_pengguna) {
+            NotificationHelper::create(
+                $payment->booking->kos->id_pengguna,
+                'Pembayaran Disetujui untuk ' . $payment->booking->kos->nama,
+                'Pembayaran dari ' . ($payment->user->nama ?? 'penyewa') . ' untuk ' . $payment->booking->kos->nama . ' telah disetujui.',
+                'payment',
+                $payment->id
+            );
+        }
 
         return redirect()->route('admin.verifikasi-pembayaran')
             ->with('success', 'Pembayaran berhasil disetujui!');

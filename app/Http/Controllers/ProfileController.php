@@ -64,8 +64,13 @@ class ProfileController extends Controller
 
         $user->save();
 
+        // Redirect berdasarkan role
         if ($user->peran === 'admin') {
             return redirect()->route('admin.dashboard', ['modal' => 'profile'])->with('success', 'Profile berhasil diperbarui!');
+        } elseif ($user->peran === 'pemilik') {
+            return redirect()->route('pemilik.dashboard', ['modal' => 'profile'])->with('success', 'Profile berhasil diperbarui!');
+        } elseif ($user->peran === 'pencari') {
+            return redirect()->route('pencari.beranda', ['modal' => 'profile'])->with('success', 'Profile berhasil diperbarui!');
         }
 
         return redirect()->route('beranda', ['modal' => 'profile'])->with('success', 'Profile berhasil diperbarui!');

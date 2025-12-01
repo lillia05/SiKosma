@@ -4,6 +4,13 @@
     $joinDate = $user->created_at->format('F Y');
     $roleText = $user->role === 'pencari' ? 'Pencari Kos' : 'Pemilik Kos';
     
+    // Tentukan route berdasarkan role
+    $homeRoute = match($user->role) {
+        'pemilik' => route('pemilik.dashboard'),
+        'admin' => route('admin.dashboard'),
+        default => route('pencari.beranda'),
+    };
+    
     // Hitung statistik
     $stats = [
         'pemesanan' => $user->role === 'pencari' ? $user->bookings()->count() : 0,
@@ -16,7 +23,7 @@
 <!-- Profile Modal -->
 <div class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 {{ request('modal') === 'profile' ? '' : 'hidden' }}" id="profileModalOverlay">
     <div class="bg-white rounded-lg max-w-2xl w-full mx-4 p-8 relative shadow-2xl max-h-[90vh] overflow-y-auto">
-        <a href="{{ route('beranda') }}" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <a href="{{ $homeRoute }}" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -79,7 +86,7 @@
                         Simpan
                     </button>
                     <a
-                        href="{{ route('beranda') }}"
+                        href="{{ $homeRoute }}"
                         class="flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition font-poppins"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -214,7 +221,7 @@
             <!-- Edit Button -->
             <div class="flex justify-center gap-2 mb-8">
                 <a
-                    href="{{ route('beranda', ['modal' => 'profile', 'edit' => 'true']) }}"
+                    href="{{ $homeRoute }}?modal=profile&edit=true"
                     class="flex items-center gap-2 px-4 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 transition font-poppins"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

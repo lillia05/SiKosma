@@ -33,8 +33,9 @@
                 <span class="ml-2 text-gray-600 text-sm">{{ number_format($kos->rating, 1) }} / 5 ({{ $kos->total_reviews }})</span>
             </div>
             @php
-                $availableRooms = $kos->rooms->where('status', 'Tersedia')->count();
-                $minPrice = $kos->rooms->where('status', 'Tersedia')->min('price_per_year');
+                // Kamar sudah difilter di controller, jadi langsung hitung dari rooms yang ada
+                $availableRooms = $kos->rooms->count();
+                $minPrice = $kos->rooms->min('price_per_year');
             @endphp
             @if($minPrice)
                 <p class="font-bold text-primary-blue mb-1">Rp{{ number_format($minPrice, 0, ',', '.') }} / Tahun</p>
