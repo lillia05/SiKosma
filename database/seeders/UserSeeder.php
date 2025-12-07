@@ -111,6 +111,36 @@ class UserSeeder extends Seeder
             'status' => 'Aktif',
         ]);
 
+        // Pemilik kos baru untuk testing laporan selesai (kos dibuat tahun 2022)
+        $budi = User::create([
+            'id' => Str::uuid(),
+            'nama' => 'Budi Santoso',
+            'email' => 'budi@pemilik.com',
+            'kata_sandi' => Hash::make('password123'),
+            'peran' => 'pemilik',
+            'telepon' => '0841234567',
+            'alamat' => 'Jl. Sudirman No. 100',
+            'kota' => 'Bandar Lampung',
+            'jenis_kelamin' => 'Putra',
+            'nama_bank' => 'BRI',
+            'nomor_rekening' => '1111222233',
+            'status' => 'Aktif',
+        ]);
+
+        // Pencari kos baru untuk testing laporan selesai (booking tahun 2022)
+        $sari = User::create([
+            'id' => Str::uuid(),
+            'nama' => 'Sari Dewi',
+            'email' => 'sari@pencari.com',
+            'kata_sandi' => Hash::make('password123'),
+            'peran' => 'pencari',
+            'telepon' => '0842234567',
+            'alamat' => 'Jl. Diponegoro No. 25',
+            'kota' => 'Bandar Lampung',
+            'jenis_kelamin' => 'Putri',
+            'status' => 'Aktif',
+        ]);
+
         // Store user IDs for use in other seeders
         $this->command->info('User IDs created:');
         $this->command->info('Admin: ' . $admin->id);
@@ -120,6 +150,8 @@ class UserSeeder extends Seeder
         $this->command->info('Lekok: ' . $lekok->id);
         $this->command->info('Lifia: ' . $lifia->id);
         $this->command->info('Muhammad: ' . $muhammad->id);
+        $this->command->info('Budi: ' . $budi->id);
+        $this->command->info('Sari: ' . $sari->id);
     }
 }
 

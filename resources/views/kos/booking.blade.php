@@ -179,12 +179,37 @@
                         </div>
                     @endif
                     
-                    <button
-                        type="submit"
-                        class="w-full bg-primary-blue text-white font-bold py-3 rounded-lg hover:bg-blue-900 transition font-poppins"
-                    >
-                        Lanjut ke Pembayaran
-                    </button>
+                    @auth
+                        <button
+                            type="submit"
+                            class="w-full bg-primary-blue text-white font-bold py-3 rounded-lg hover:bg-blue-900 transition font-poppins"
+                        >
+                            Lanjut ke Pembayaran
+                        </button>
+                    @else
+                        <div class="bg-yellow-50 border-2 border-yellow-200 rounded-lg p-4 mb-4">
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                                </svg>
+                                <div class="flex-1">
+                                    <h5 class="font-bold text-lg text-yellow-800 mb-1 font-poppins">Login Diperlukan</h5>
+                                    <p class="text-gray-700 mb-3 font-poppins">Anda harus login terlebih dahulu untuk melanjutkan ke pembayaran.</p>
+                                    <a href="{{ route('beranda', ['modal' => 'login']) }}" 
+                                       class="inline-block bg-primary-blue text-white px-6 py-2 rounded-lg hover:bg-blue-900 transition font-poppins font-semibold no-underline">
+                                        Login Sekarang
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            disabled
+                            class="w-full bg-gray-400 text-white font-bold py-3 rounded-lg cursor-not-allowed font-poppins"
+                        >
+                            Lanjut ke Pembayaran (Login Diperlukan)
+                        </button>
+                    @endauth
                 </div>
             </div>
         </form>

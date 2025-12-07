@@ -7,6 +7,7 @@
                 <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 font-poppins">Email</th>
                 <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 font-poppins">Tanggal Daftar</th>
                 <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 font-poppins">Role</th>
+                <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 font-poppins">Nomor Rekening</th>
                 <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 font-poppins">Status</th>
                 <th class="text-left py-3 px-4 text-sm font-semibold text-gray-700 font-poppins">Aksi</th>
             </tr>
@@ -34,6 +35,22 @@
                     <td class="py-3 px-4 text-sm text-gray-600 font-poppins">{{ $user->email }}</td>
                     <td class="py-3 px-4 text-sm text-gray-900 font-poppins">{{ $tanggalDaftar }}</td>
                     <td class="py-3 px-4 text-sm text-gray-900 font-poppins">{{ $roleDisplay }}</td>
+                    <td class="py-3 px-4 text-sm text-gray-900 font-poppins">
+                        @if($user->peran === 'pemilik')
+                            @if($user->nomor_rekening)
+                                <div class="space-y-1">
+                                    <div class="font-semibold">{{ $user->nomor_rekening }}</div>
+                                    @if($user->nama_bank)
+                                        <div class="text-xs text-gray-500">({{ $user->nama_bank }})</div>
+                                    @endif
+                                </div>
+                            @else
+                                <span class="text-gray-400 italic text-xs">Belum diisi</span>
+                            @endif
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
+                    </td>
                     <td class="py-3 px-4 text-sm">
                         <span class="px-3 py-1 rounded-full text-xs font-semibold font-poppins {{ $user->status === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                             {{ $statusDisplay }}

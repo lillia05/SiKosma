@@ -97,6 +97,13 @@ class KosController extends Controller
      */
     public function storeBooking(Request $request, $id)
     {
+        // Cek apakah user sudah login
+        if (!Auth::check()) {
+            return redirect()->route('kos.detail', $id)
+                ->with('error', 'Silakan login terlebih dahulu untuk melakukan penyewaan.')
+                ->with('show_login_modal', true);
+        }
+
         $request->validate([
             'id_kamar' => 'required|exists:kamar,id',
             'tanggal_mulai' => 'required|date|after_or_equal:today',

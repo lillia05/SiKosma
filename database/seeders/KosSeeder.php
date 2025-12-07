@@ -111,6 +111,27 @@ class KosSeeder extends Seeder
             'rating' => 0,
             'total_ulasan' => 0,
         ]);
+
+        // Kos 7 - Kos Putri Bunga (dibuat tahun 2022 untuk testing laporan selesai)
+        $budi = User::where('email', 'budi@pemilik.com')->first();
+        if ($budi) {
+            $kos7 = Kos::create([
+                'id' => Str::uuid(),
+                'id_pengguna' => $budi->id,
+                'nama' => 'Kos Putri Bunga',
+                'deskripsi' => 'Kos putri yang nyaman dengan fasilitas lengkap. Lokasi strategis dekat kampus dan pusat perbelanjaan.',
+                'nomor_telepon' => '0841234567',
+                'tipe' => 'Putri',
+                'alamat' => 'Jl. Sudirman No. 100',
+                'kota' => 'Bandar Lampung',
+                'tautan_google_maps' => 'https://maps.google.com',
+                'status' => 'Disetujui',
+                'rating' => 0,
+                'total_ulasan' => 0,
+                'created_at' => '2022-01-15 10:00:00',
+                'updated_at' => '2022-01-15 10:00:00',
+            ]);
+        }
     }
 }
 

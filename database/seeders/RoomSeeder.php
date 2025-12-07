@@ -100,6 +100,24 @@ class RoomSeeder extends Seeder
                 ]);
             }
         }
+
+        // Rooms for Kos Putri Bunga (dibuat tahun 2022 untuk testing laporan selesai)
+        $kos7 = Kos::where('nama', 'Kos Putri Bunga')->first();
+        if ($kos7) {
+            for ($i = 1; $i <= 5; $i++) {
+                Room::create([
+                    'id' => Str::uuid(),
+                    'id_kos' => $kos7->id,
+                    'nomor_kamar' => (string)$i,
+                    'harga_per_tahun' => 6800000,
+                    'ukuran_kamar' => 16,
+                    'fasilitas' => 'Ranjang, Kasur, Meja Belajar, Kursi, WiFi, Kamar Mandi Dalam, Dapur Umum, Parkir, Lemari',
+                    'status' => $i == 1 ? 'Terisi' : 'Tersedia', // Kamar 1 terisi karena ada booking
+                    'created_at' => '2022-01-20 10:00:00',
+                    'updated_at' => '2022-01-20 10:00:00',
+                ]);
+            }
+        }
     }
 }
 

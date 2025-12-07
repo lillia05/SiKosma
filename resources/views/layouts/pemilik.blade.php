@@ -41,20 +41,15 @@
                     <a href="{{ route('pemilik.dashboard') }}" class="font-poppins transition text-base no-underline {{ request()->routeIs('pemilik.dashboard') ? 'text-primary-blue font-semibold' : 'text-gray-600 font-medium' }} hover:underline">
                         Beranda
                     </a>
-                    <a href="#" class="font-poppins transition text-base no-underline text-gray-600 font-medium hover:underline">
+                    <a href="{{ route('pemilik.properti') }}" class="font-poppins transition text-base no-underline {{ request()->routeIs('pemilik.properti') ? 'text-primary-blue font-semibold' : 'text-gray-600 font-medium' }} hover:underline">
                         Properti Kos Saya
                     </a>
-                    <a href="#" class="font-poppins transition text-base no-underline text-gray-600 font-medium hover:underline">
+                    <a href="{{ route('pemilik.pemesanan') }}" class="font-poppins transition text-base no-underline {{ request()->routeIs('pemilik.pemesanan') ? 'text-primary-blue font-semibold' : 'text-gray-600 font-medium' }} hover:underline">
                         Pemesanan
                     </a>
-                    <div class="relative">
-                        <a href="#" class="font-poppins transition text-base no-underline text-gray-600 font-medium hover:underline flex items-center gap-1">
-                            Laporan
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                            </svg>
-                        </a>
-                    </div>
+                    <a href="{{ route('pemilik.laporan') }}" class="font-poppins transition text-base no-underline {{ request()->routeIs('pemilik.laporan') ? 'text-primary-blue font-semibold' : 'text-gray-600 font-medium' }} hover:underline">
+                        Laporan
+                    </a>
                     
                     <!-- Profile Icon -->
                     <div class="relative" id="pemilikProfileDropdownContainer">

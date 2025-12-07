@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Booking;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\NotificationHelper;
 
@@ -81,6 +83,14 @@ class AdminVerifikasiPembayaranController extends Controller
             );
         }
 
+        // Mark notifikasi admin terkait pembayaran ini sebagai sudah dibaca
+        // Cari berdasarkan id_terkait yang sama dengan payment id
+        $adminIds = User::where('peran', 'admin')->pluck('id');
+        Notification::whereIn('id_pengguna', $adminIds)
+            ->where('tipe', 'payment')
+            ->where('id_terkait', $payment->id)
+            ->update(['sudah_dibaca' => true]);
+
         return redirect()->route('admin.verifikasi-pembayaran')
             ->with('success', 'Pembayaran berhasil disetujui!');
     }
@@ -90,7 +100,7 @@ class AdminVerifikasiPembayaranController extends Controller
      */
     public function reject($id)
     {
-        $payment = Payment::with(['booking', 'user'])->findOrFail($id);
+        $payment = Payment::with(['booking.kos', 'booking.room', 'user'])->findOrFail($id);
         
         // Update status pembayaran
         $payment->status = 'Rejected';
@@ -102,7 +112,7 @@ class AdminVerifikasiPembayaranController extends Controller
             $payment->booking->save();
         }
 
-        // Buat notifikasi untuk user
+        // Buat notifikasi untuk user (pencari)
         NotificationHelper::create(
             $payment->id_pengguna,
             'Pembayaran Ditolak',
@@ -110,6 +120,25 @@ class AdminVerifikasiPembayaranController extends Controller
             'payment',
             $payment->id
         );
+
+        // Buat notifikasi untuk pemilik kos
+        if ($payment->booking && $payment->booking->kos && $payment->booking->kos->id_pengguna) {
+            NotificationHelper::create(
+                $payment->booking->kos->id_pengguna,
+                'Pembayaran Ditolak untuk ' . $payment->booking->kos->nama,
+                'Pembayaran dari ' . ($payment->user->nama ?? 'penyewa') . ' untuk ' . $payment->booking->kos->nama . ' telah ditolak oleh admin.',
+                'payment',
+                $payment->id
+            );
+        }
+
+        // Mark notifikasi admin terkait pembayaran ini sebagai sudah dibaca
+        // Cari berdasarkan id_terkait yang sama dengan payment id
+        $adminIds = User::where('peran', 'admin')->pluck('id');
+        Notification::whereIn('id_pengguna', $adminIds)
+            ->where('tipe', 'payment')
+            ->where('id_terkait', $payment->id)
+            ->update(['sudah_dibaca' => true]);
 
         return redirect()->route('admin.verifikasi-pembayaran')
             ->with('success', 'Pembayaran berhasil ditolak!');

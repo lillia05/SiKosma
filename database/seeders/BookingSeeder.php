@@ -84,6 +84,31 @@ class BookingSeeder extends Seeder
             'total_harga' => 6500000,
             'status' => 'CONFIRMED',
         ]);
+
+        // Booking 5 - Booking selesai tahun 2023 (untuk testing laporan selesai)
+        // Kos Putri Bunga dibuat tahun 2022, booking tahun 2022, selesai tahun 2023
+        $kos7 = Kos::where('nama', 'Kos Putri Bunga')->first();
+        $sari = User::where('email', 'sari@pencari.com')->first();
+        
+        if ($kos7 && $sari) {
+            $room5 = Room::where('id_kos', $kos7->id)->where('nomor_kamar', '1')->first();
+            if ($room5) {
+                Booking::create([
+                    'id' => Str::uuid(),
+                    'id_pemesanan' => 'BK005',
+                    'id_pengguna' => $sari->id,
+                    'id_kamar' => $room5->id,
+                    'id_kos' => $kos7->id,
+                    'tanggal_mulai' => '2022-02-01',
+                    'durasi_tahun' => 1,
+                    'tanggal_selesai' => '2023-02-01',
+                    'total_harga' => 6800000,
+                    'status' => 'CONFIRMED',
+                    'created_at' => '2022-01-25 10:00:00',
+                    'updated_at' => '2022-01-25 10:00:00',
+                ]);
+            }
+        }
     }
 }
 

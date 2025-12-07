@@ -41,20 +41,30 @@
                 <h2 class="text-lg font-bold text-gray-900 mb-4 font-poppins">Notifikasi Terbaru</h2>
                 <div class="space-y-4">
                     @forelse($notifications as $notification)
-                    <div class="flex items-start justify-between {{ !$loop->last ? 'pb-4 border-b' : '' }}">
-                        <div>
-                            <p class="text-sm text-gray-900 font-poppins font-semibold">
-                                {{ $notification->judul }}
-                                @if($notification->user)
-                                    : [{{ $notification->user->nama }}]
+                    <div class="flex items-start justify-between {{ !$loop->last ? 'pb-4 border-b' : '' }} {{ isset($notification['sudah_dibaca']) && $notification['sudah_dibaca'] ? 'opacity-75' : '' }}">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                @if(isset($notification['sudah_dibaca']) && !$notification['sudah_dibaca'] && $notification['status'] === 'MENUNGGU')
+                                    <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
                                 @endif
-                            </p>
+                                <p class="text-sm text-gray-900 font-poppins font-semibold">
+                                    {{ $notification['judul'] }}
+                                    @if(isset($notification['user']) && $notification['user'])
+                                        : [{{ $notification['user']->nama }}]
+                                    @endif
+                                </p>
+                            </div>
+                            @if(isset($notification['pesan']) && $notification['pesan'])
+                                <p class="text-xs text-gray-600 font-poppins mt-1">
+                                    {{ $notification['pesan'] }}
+                                </p>
+                            @endif
                             <p class="text-xs text-gray-500 font-poppins mt-1">
-                                {{ $notification->created_at->format('Y-m-d') }}
+                                {{ $notification['created_at']->setTimezone('Asia/Jakarta')->format('Y-m-d H:i') }}
                             </p>
                         </div>
-                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full font-poppins">
-                            MENUNGGU
+                        <span class="{{ $notification['status_class'] }} text-xs font-semibold px-3 py-1 rounded-full font-poppins ml-2">
+                            {{ $notification['status'] }}
                         </span>
                     </div>
                     @empty

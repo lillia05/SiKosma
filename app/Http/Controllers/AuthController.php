@@ -122,6 +122,16 @@ class AuthController extends Controller
         
         Auth::login($user);
 
+        // Buat notifikasi untuk admin jika user mendaftar sebagai pemilik kos
+        if ($request->role === 'pemilik') {
+            \App\Helpers\NotificationHelper::notifyAdmins(
+                'Pemilik Kos Baru Mendaftar',
+                'Pemilik kos baru "' . $user->nama . '" (' . $user->email . ') telah mendaftar.',
+                'system',
+                $user->id
+            );
+        }
+
         if (in_array($request->role, ['pencari', 'pemilik'])) {
             session()->flash('show_welcome_message', true);
         }

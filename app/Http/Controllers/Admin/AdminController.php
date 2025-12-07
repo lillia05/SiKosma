@@ -35,15 +35,127 @@ class AdminController extends Controller
                 ->whereYear('created_at', now()->year)
                 ->sum('jumlah') ?? 0;
 
-            // Notifikasi terbaru (belum dibaca) - optimasi dengan select specific columns
-            $notifications = Notification::where('sudah_dibaca', false)
+            // Sync notifikasi lama: mark notifikasi yang terkait dengan payment/kos yang sudah disetujui sebagai sudah dibaca
+            // Hanya sync notifikasi yang dibuat SEBELUM payment/kos disetujui (untuk menghindari menandai notifikasi baru)
+            $adminIds = User::where('peran', 'admin')->pluck('id');
+            
+            // Mark notifikasi payment yang terkait dengan payment yang sudah Verified
+            // Hanya mark notifikasi yang dibuat sebelum payment di-verify
+            $verifiedPayments = Payment::with('booking.kos')
+                ->where('status', 'Verified')
+                ->get();
+            
+            if ($verifiedPayments->isNotEmpty()) {
+                foreach ($verifiedPayments as $payment) {
+                    // Mark notifikasi yang dibuat sebelum payment di-verify
+                    $paymentVerifiedAt = $payment->updated_at; // Waktu payment di-verify
+                    
+                    Notification::whereIn('id_pengguna', $adminIds)
+                        ->where('tipe', 'payment')
+                        ->where('id_terkait', $payment->id)
+                        ->where('sudah_dibaca', false)
+                        ->where('created_at', '<=', $paymentVerifiedAt) // Hanya notifikasi yang dibuat sebelum di-verify
+                        ->update(['sudah_dibaca' => true]);
+                }
+            }
+            
+            // Mark notifikasi verification yang terkait dengan kos yang sudah Disetujui
+            // Hanya mark notifikasi yang dibuat sebelum kos disetujui
+            $approvedKos = Kos::where('status', 'Disetujui')->get();
+            if ($approvedKos->isNotEmpty()) {
+                foreach ($approvedKos as $kos) {
+                    $kosApprovedAt = $kos->updated_at; // Waktu kos disetujui
+                    
+                    Notification::whereIn('id_pengguna', $adminIds)
+                        ->where('tipe', 'verification')
+                        ->where('id_terkait', $kos->id)
+                        ->where('sudah_dibaca', false)
+                        ->where('created_at', '<=', $kosApprovedAt) // Hanya notifikasi yang dibuat sebelum disetujui
+                        ->update(['sudah_dibaca' => true]);
+                }
+            }
+            
+            // Mark notifikasi payment yang terkait dengan payment yang sudah Rejected
+            // Hanya mark notifikasi yang dibuat sebelum payment ditolak
+            $rejectedPayments = Payment::where('status', 'Rejected')->get();
+            if ($rejectedPayments->isNotEmpty()) {
+                foreach ($rejectedPayments as $payment) {
+                    $paymentRejectedAt = $payment->updated_at; // Waktu payment ditolak
+                    
+                    Notification::whereIn('id_pengguna', $adminIds)
+                        ->where('tipe', 'payment')
+                        ->where('id_terkait', $payment->id)
+                        ->where('sudah_dibaca', false)
+                        ->where('created_at', '<=', $paymentRejectedAt) // Hanya notifikasi yang dibuat sebelum ditolak
+                        ->update(['sudah_dibaca' => true]);
+                }
+            }
+            
+            // Mark notifikasi verification yang terkait dengan kos yang sudah Ditolak
+            // Hanya mark notifikasi yang dibuat sebelum kos ditolak
+            $rejectedKos = Kos::where('status', 'Ditolak')->get();
+            if ($rejectedKos->isNotEmpty()) {
+                foreach ($rejectedKos as $kos) {
+                    $kosRejectedAt = $kos->updated_at; // Waktu kos ditolak
+                    
+                    Notification::whereIn('id_pengguna', $adminIds)
+                        ->where('tipe', 'verification')
+                        ->where('id_terkait', $kos->id)
+                        ->where('sudah_dibaca', false)
+                        ->where('created_at', '<=', $kosRejectedAt) // Hanya notifikasi yang dibuat sebelum ditolak
+                        ->update(['sudah_dibaca' => true]);
+                }
+            }
+            
+            // Notifikasi terbaru - ambil 5 notifikasi terbaru untuk admin
+            // Prioritas: belum dibaca dulu, lalu sudah dibaca, semua diurutkan berdasarkan waktu terbaru
+            // Ambil lebih banyak notifikasi (20) untuk memastikan notifikasi baru tidak terlewat, lalu urutkan dan ambil 5 teratas
+            $allNotifications = Notification::whereIn('id_pengguna', $adminIds)
                 ->with(['user' => function($query) {
                     $query->select('id', 'nama');
                 }])
-                ->select('id', 'id_pengguna', 'judul', 'pesan', 'created_at')
-                ->orderBy('created_at', 'desc')
-                ->limit(5)
+                ->select('id', 'id_pengguna', 'judul', 'pesan', 'tipe', 'sudah_dibaca', 'created_at')
+                ->orderBy('created_at', 'desc') // Ambil berdasarkan waktu terbaru dulu
+                ->limit(20) // Ambil 20 terbaru untuk memastikan tidak ada yang terlewat
                 ->get();
+            
+            // Urutkan: belum dibaca dulu, lalu sudah dibaca, semua berdasarkan waktu terbaru
+            $notifications = $allNotifications
+                ->sort(function($a, $b) {
+                    // Prioritas 1: belum dibaca dulu
+                    if ($a->sudah_dibaca != $b->sudah_dibaca) {
+                        return $a->sudah_dibaca ? 1 : -1; // false (belum dibaca) lebih dulu
+                    }
+                    // Prioritas 2: waktu terbaru
+                    return $b->created_at->timestamp <=> $a->created_at->timestamp;
+                })
+                ->take(5) // Ambil 5 teratas setelah sorting
+                ->values() // Reset keys
+                ->map(function($notif) {
+                    // Tentukan status berdasarkan tipe dan judul
+                    $status = 'MENUNGGU';
+                    $statusClass = 'bg-yellow-100 text-yellow-800';
+                    
+                    if (str_contains(strtolower($notif->judul), 'disetujui') || 
+                        str_contains(strtolower($notif->judul), 'diverifikasi')) {
+                        $status = 'DISETUJUI';
+                        $statusClass = 'bg-green-100 text-green-800';
+                    } elseif (str_contains(strtolower($notif->judul), 'ditolak')) {
+                        $status = 'DITOLAK';
+                        $statusClass = 'bg-red-100 text-red-800';
+                    }
+                    
+                    return [
+                        'id' => $notif->id,
+                        'judul' => $notif->judul,
+                        'pesan' => $notif->pesan,
+                        'user' => $notif->user,
+                        'created_at' => $notif->created_at,
+                        'sudah_dibaca' => $notif->sudah_dibaca,
+                        'status' => $status,
+                        'status_class' => $statusClass,
+                    ];
+                });
 
             // Grafik pemesanan per tahun (2022-2025) - optimasi dengan single query
             // PostgreSQL compatible: menggunakan EXTRACT(YEAR FROM created_at)

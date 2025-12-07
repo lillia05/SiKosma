@@ -19,6 +19,13 @@ class PaymentController extends Controller
      */
     public function index(Request $request)
     {
+        // Cek apakah user sudah login
+        if (!Auth::check()) {
+            return redirect()->route('beranda')
+                ->with('error', 'Silakan login terlebih dahulu untuk melakukan pembayaran.')
+                ->with('show_login_modal', true);
+        }
+
         // Ambil data booking dari session
         $bookingData = session('booking_data');
         

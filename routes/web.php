@@ -59,6 +59,13 @@ Route::middleware(['auth', 'auth.role:pencari'])->prefix('pencari')->name('penca
 // Routes pemilik (terautentikasi)
 Route::middleware(['auth', 'auth.role:pemilik'])->prefix('pemilik')->name('pemilik.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\PemilikController::class, 'dashboard'])->name('dashboard');
+    Route::get('/properti', [App\Http\Controllers\PemilikController::class, 'properti'])->name('properti');
+    Route::get('/pemesanan', [App\Http\Controllers\PemilikController::class, 'pemesanan'])->name('pemesanan');
+    Route::get('/laporan', [App\Http\Controllers\PemilikController::class, 'laporan'])->name('laporan');
+    Route::get('/kos/create', [App\Http\Controllers\PemilikController::class, 'create'])->name('kos.create');
+    Route::get('/kos/{id}/edit', [App\Http\Controllers\PemilikController::class, 'edit'])->name('kos.edit');
+    Route::post('/kos', [App\Http\Controllers\PemilikController::class, 'store'])->name('kos.store');
+    Route::put('/kos/{id}', [App\Http\Controllers\PemilikController::class, 'update'])->name('kos.update');
 });
 
 // Routes admin (terautentikasi) - placeholder

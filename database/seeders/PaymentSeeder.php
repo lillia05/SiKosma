@@ -74,6 +74,26 @@ class PaymentSeeder extends Seeder
             'nama_pengirim' => 'Lekok Indah Lia',
             'status' => 'Verified',
         ]);
+
+        // Payment 5 - untuk booking selesai tahun 2023 (untuk testing laporan selesai)
+        $booking5 = Booking::where('id_pemesanan', 'BK005')->first();
+        $sari = User::where('email', 'sari@pencari.com')->first();
+        
+        if ($booking5 && $sari) {
+            Payment::create([
+                'id' => Str::uuid(),
+                'id_pemesanan' => $booking5->id,
+                'id_pengguna' => $sari->id,
+                'jumlah' => 6800000,
+                'metode_pembayaran' => 'Transfer Bank',
+                'nama_bank_pengirim' => 'Bank Mandiri',
+                'nomor_rekening_pengirim' => '9988776655',
+                'nama_pengirim' => 'Sari Dewi',
+                'status' => 'Verified',
+                'created_at' => '2022-01-25 10:00:00',
+                'updated_at' => '2022-01-25 10:00:00',
+            ]);
+        }
     }
 }
 
