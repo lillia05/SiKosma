@@ -1,70 +1,136 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SiKosma (Sistem Informasi Kos Mahasiswa Unila)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**SiKosma** adalah platform berbasis web yang dirancang untuk mempermudah mahasiswa Universitas Lampung (Unila) dalam mencari tempat tinggal (kos) di sekitar kampus, khususnya wilayah Kampung Baru dan Gedong Meneng. Sistem ini juga membantu pemilik kos untuk mempromosikan properti mereka secara efektif dan terpusat[cite: 685, 686, 690].
 
-## About Laravel
+Proyek ini dikembangkan sebagai **Project Akhir Mata Kuliah Pemrograman Web Lanjut** di Jurusan Ilmu Komputer, FMIPA, Universitas Lampung.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+🔗 **Link Repository:** [https://github.com/lillia05/SiKosma.git](https://github.com/lillia05/SiKosma.git) 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-----
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Latar Belakang
 
-## Learning Laravel
+Mahasiswa sering mengalami kesulitan mencari informasi kos yang terpusat dan valid, sementara pemilik kos kesulitan menjangkau pasar mahasiswa baru. **SiKosma** hadir sebagai solusi untuk:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+  * Menyediakan informasi kos secara *real-time* dan terpusat.
+  * Menjamin keamanan transaksi dengan verifikasi sistem.
+  * Mempermudah manajemen properti bagi pemilik kos.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+-----
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Fitur Utama
 
-## Laravel Sponsors
+.Sistem ini membagi hak akses menjadi tiga peran utama.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 1\. Pengguna (Pencari Kos)
 
-### Premium Partners
+  * **Pencarian & Filter:** Cari kos berdasarkan lokasi (Kampung Baru/Gedong Meneng), tipe (Putra/Putri/Campur), dan harga.
+  * **Detail Kos:** Melihat foto, fasilitas, harga, dan ketersediaan kamar.
+  * **Pemesanan (Booking):** Melakukan sewa kos secara langsung melalui aplikasi.
+  * **Pembayaran:** Upload bukti transfer/e-wallet untuk diverifikasi admin/pemilik.
+  * **Riwayat:** Memantau status pemesanan dan riwayat transaksi.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 2\. Pemilik Kos
 
-## Contributing
+  * **Manajemen Properti:** Tambah, edit, dan hapus data kos serta kamar.
+  * **Manajemen Booking:** Menerima dan melihat daftar penyewa yang masuk.
+  * **Laporan Keuangan:** Melihat ringkasan pendapatan bulanan dan statistik okupansi.
+  * **Dashboard Statistik:** Memantau jumlah kamar terisi dan total pendapatan.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3\. Admin
 
-## Code of Conduct
+  * **Verifikasi Kos:** Memvalidasi data kos baru sebelum ditampilkan ke publik (Disetujui/Ditolak).
+  * **Verifikasi Pembayaran:** Memverifikasi bukti pembayaran dari penyewa.
+  * **Manajemen Pengguna:** Mengelola akun pengguna dan pemilik kos.
+  * **Monitoring Sistem:** Memantau seluruh aktivitas transaksi dalam platform.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+-----
 
-## Security Vulnerabilities
+## Arsitektur & Database
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+SiKosma menggunakan struktur database relasional yang mencakup tabel-tabel utama berikut:
 
-## License
+  * `Pengguna` (Menyimpan data Admin, Pemilik, dan Pencari Kos).
+  * `Kos` (Data properti kos).
+  * `Kamar` (Detail kamar, harga, dan fasilitas).
+  * `Gambar_Kos` (Galeri foto properti).
+  * `Pemesanan` (Mencatat transaksi sewa).
+  * `Pembayaran` (Mencatat bukti dan status pembayaran).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# SiKosma
->>>>>>> 2ceb4127fc99ed7c29ca4058cd460741e33878f1
+-----
+## Implementasi Teknis & Keamanan
+Bagian ini menjelaskan detail teknis implementasi di back-end sistem:
+
+### 1\. Autentikasi & Verifikasi
+
+  * **Proses Login:** Sistem mengamankan password pengguna menggunakan algoritma hashing Bcrypt (standar Laravel). Password tidak disimpan sebagai plain text di database.
+  * **Verifikasi Email:** Verifikasi email diterapkan saat registrasi. Akun baru ditandai dengan kolom email_verified_at di tabel Pengguna, memastikan validitas pengguna.
+
+### 2\. Validasi
+
+  * **Validasi Sisi View (Frontend):** Dilakukan untuk memberikan umpan balik instan kepada pengguna (misalnya, input wajib diisi) sebelum data dikirim ke server.
+  * **Validasi Sisi Controller (Server-side):** Merupakan garis pertahanan utama. Validasi ketat diterapkan pada setiap input form (misalnya: format file gambar, batasan panjang teks, input harga harus numerik) dan proses status transaksi (contoh: status transaksi diubah dari Menunggu menjadi Terverifikasi hanya oleh Admin).
+
+### 3\. Session & Otorisasi
+
+  * **Pengelolaan Session:** Sesi dikelola secara otomatis oleh framework Laravel untuk melacak status login pengguna setelah autentikasi berhasil.
+  * **Otorisasi:** Otorisasi akses menggunakan sistem Middleware dan pengecekan role (peran). Setiap route (jalur akses) yang bersifat sensitif hanya dapat diakses jika peran pengguna (Admin, Pemilik Kos, atau Penyewa) sesuai.
+
+### 4\. Data Master
+Data master adalah data referensi statis yang digunakan sistem untuk menjaga konsistensi:
+  * **Jenis Pengguna:** Admin, Pemilik Kos, Pencari Kos (disimpan di kolom role tabel Pengguna).
+  * **Status Verifikasi/Transaksi:** Menunggu Verifikasi, Diverifikasi, Ditolak (untuk kos), Pending, Confirmed, Active, Cancelled (untuk pemesanan).
+  * **Kategori Lokasi:** Kampung Baru, Gedong Meneng.
+
+----
+
+## Tim Pengembang (Kelompok 4)
+
+Proyek ini dikembangkan oleh tim mahasiswa Ilmu Komputer Unila angkatan 2023:
+
+| NPM | Nama |
+| :--- | :--- |
+| **2357051018** | **Muhammad Akmal Fadhurohman** |
+| **2317051040** | **Muhammad Alvin** |
+| **2317051097** | **Lekok Indah Lia** |
+| **2317051022** | **Lifia Anasywa** |
+
+-----
+
+## Instalasi & Menjalankan Project
+
+Ikuti langkah-langkah berikut untuk menjalankan proyek ini di mesin lokal Anda:
+
+1.  **Clone Repository**
+
+    ```bash
+    git clone https://github.com/lillia05/SiKosma.git
+    cd SiKosma
+    ```
+
+2.  **Install Dependencies**
+
+    ```bash
+    composer install
+    npm install
+    ```
+
+3.  **Konfigurasi Environment**
+
+      * Duplikasi file `.env.example` menjadi `.env`.
+      * Sesuaikan konfigurasi database (DB\_DATABASE, DB\_USERNAME, dll).
+
+4.  **Generate Key & Migrate Database**
+
+    ```bash
+    php artisan key:generate
+    php artisan migrate:fresh --seed
+    ```
+
+5.  **Jalankan Server**
+
+    ```bash
+    php artisan serve
+    ```
+
+    Buka `http://127.0.0.1:8000` di browser Anda.
