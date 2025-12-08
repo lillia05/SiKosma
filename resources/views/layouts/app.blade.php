@@ -26,6 +26,7 @@
     @include('partials.footer')
     
     @include('partials.login-modal')
+    @include('partials.register-modal')
     
     @auth
         @include('partials.profile-modal')

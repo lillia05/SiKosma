@@ -23,6 +23,7 @@ class UserSeeder extends Seeder
             'kota' => 'Bandar Lampung',
             'jenis_kelamin' => 'Putra',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         // Kos owners
@@ -39,6 +40,7 @@ class UserSeeder extends Seeder
             'nama_bank' => 'BRI',
             'nomor_rekening' => '0123456789',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         $wisma = User::create([
@@ -54,6 +56,7 @@ class UserSeeder extends Seeder
             'nama_bank' => 'BCA',
             'nomor_rekening' => '1234567890',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         $lia = User::create([
@@ -69,6 +72,7 @@ class UserSeeder extends Seeder
             'nama_bank' => 'Mandiri',
             'nomor_rekening' => '0987654321',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         // Regular users (Pencari Kos)
@@ -83,6 +87,7 @@ class UserSeeder extends Seeder
             'kota' => 'Bandar Lampung',
             'jenis_kelamin' => 'Putri',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         $lifia = User::create([
@@ -96,6 +101,7 @@ class UserSeeder extends Seeder
             'kota' => 'Bandar Lampung',
             'jenis_kelamin' => 'Putri',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         $muhammad = User::create([
@@ -109,6 +115,7 @@ class UserSeeder extends Seeder
             'kota' => 'Bandar Lampung',
             'jenis_kelamin' => 'Putra',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         // Pemilik kos baru untuk testing laporan selesai (kos dibuat tahun 2022)
@@ -125,6 +132,7 @@ class UserSeeder extends Seeder
             'nama_bank' => 'BRI',
             'nomor_rekening' => '1111222233',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         // Pencari kos baru untuk testing laporan selesai (booking tahun 2022)
@@ -139,6 +147,7 @@ class UserSeeder extends Seeder
             'kota' => 'Bandar Lampung',
             'jenis_kelamin' => 'Putri',
             'status' => 'Aktif',
+            'email_verified_at' => now(),
         ]);
 
         // Store user IDs for use in other seeders

@@ -50,6 +50,13 @@ class AuthController extends Controller
                 ->withInput($request->only('email', 'role'));
         }
 
+        // Cek email verification
+        if (!$user->hasVerifiedEmail()) {
+            Auth::login($user, $request->remember ?? false);
+            return redirect()->route('verification.notice')
+                ->with('warning', 'Silakan verifikasi email Anda terlebih dahulu untuk melanjutkan.');
+        }
+
         Auth::login($user, $request->remember ?? false);
 
         if (in_array($user->role, ['pencari', 'pemilik'])) {
@@ -117,9 +124,13 @@ class AuthController extends Controller
             $userData['nomor_rekening'] = $request->account_number;
         }
 
-        // Buat user dan login - sama seperti method login
+        // Buat user
         $user = User::create($userData);
         
+        // Kirim email verification
+        $user->sendEmailVerificationNotification();
+        
+        // Login user (tapi akan dicek email verification saat akses fitur tertentu)
         Auth::login($user);
 
         // Buat notifikasi untuk admin jika user mendaftar sebagai pemilik kos
@@ -132,16 +143,9 @@ class AuthController extends Controller
             );
         }
 
-        if (in_array($request->role, ['pencari', 'pemilik'])) {
-            session()->flash('show_welcome_message', true);
-        }
-
-        // Redirect berdasarkan role - sama seperti login
-        if ($request->role === 'pemilik') {
-            return redirect()->route('pemilik.dashboard')->with('success', 'Registrasi berhasil!');
-        } else {
-            return redirect()->route('pencari.beranda')->with('success', 'Registrasi berhasil!');
-        }
+        // Redirect ke halaman verifikasi email
+        return redirect()->route('verification.notice')
+            ->with('success', 'Registrasi berhasil! Silakan cek email Anda untuk verifikasi akun.');
     }
 
     /**

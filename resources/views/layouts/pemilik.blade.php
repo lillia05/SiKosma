@@ -48,8 +48,8 @@
                         Pemesanan
                     </a>
                     <a href="{{ route('pemilik.laporan') }}" class="font-poppins transition text-base no-underline {{ request()->routeIs('pemilik.laporan') ? 'text-primary-blue font-semibold' : 'text-gray-600 font-medium' }} hover:underline">
-                        Laporan
-                    </a>
+                            Laporan
+                        </a>
                     
                     <!-- Profile Icon -->
                     <div class="relative" id="pemilikProfileDropdownContainer">

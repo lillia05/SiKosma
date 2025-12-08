@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\BerandaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PencariController;
@@ -37,6 +38,43 @@ Route::middleware('auth')->group(function () {
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Email Verification Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+    
+    Route::get('/email/verify/{id}/{hash}', function (Request $request) {
+        $user = \App\Models\User::findOrFail($request->route('id'));
+        
+        if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+            abort(403);
+        }
+        
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route('beranda')->with('info', 'Email sudah diverifikasi.');
+        }
+        
+        if ($user->markEmailAsVerified()) {
+            event(new \Illuminate\Auth\Events\Verified($user));
+        }
+        
+        // Redirect berdasarkan role
+        if ($user->role === 'admin') {
+            return redirect()->route('admin.dashboard')->with('success', 'Email berhasil diverifikasi!');
+        } elseif ($user->role === 'pemilik') {
+            return redirect()->route('pemilik.dashboard')->with('success', 'Email berhasil diverifikasi!');
+        } else {
+            return redirect()->route('pencari.beranda')->with('success', 'Email berhasil diverifikasi!');
+        }
+    })->middleware(['signed'])->name('verification.verify');
+    
+    Route::post('/email/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+        return back()->with('message', 'Link verifikasi telah dikirim ke email Anda!');
+    })->middleware('throttle:6,1')->name('verification.send');
+});
 
 // Routes profile (terautentikasi)
 Route::middleware('auth')->group(function () {
