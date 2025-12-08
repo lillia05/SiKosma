@@ -128,12 +128,35 @@ class GoogleController extends Controller
             Cache::forget($cacheKey);
             session()->forget('google_oauth_role');
 
+            // Cek jika sudah ada user yang login dengan role berbeda di session ini
+            // Logout dulu sebelum proses login baru untuk mencegah login bersamaan dengan role berbeda
+            if (Auth::check()) {
+                $currentActiveRole = session('active_role');
+                // Jika ada active_role yang berbeda dari role yang akan di-login, logout dulu
+                if ($currentActiveRole && $currentActiveRole !== $role) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+                }
+            }
+
             // Cek apakah user sudah terdaftar berdasarkan google_id atau email
             $user = User::where('google_id', $googleUser->getId())
                 ->orWhere('email', $googleUser->getEmail())
                 ->first();
 
             if ($user) {
+                // Pastikan tidak ada user lain yang login dengan role berbeda
+                if (Auth::check()) {
+                    $currentActiveRole = session('active_role');
+                    if ($currentActiveRole && $currentActiveRole !== $user->peran) {
+                        // Logout dulu jika role berbeda
+                        Auth::logout();
+                        $request->session()->invalidate();
+                        $request->session()->regenerateToken();
+                    }
+                }
+
                 // User sudah terdaftar, lakukan login
                 // Update google_id jika belum ada
                 if (!$user->google_id) {
@@ -159,6 +182,9 @@ class GoogleController extends Controller
 
                 // Login user
                 Auth::login($user, true);
+                
+                // Simpan active_role di session untuk mencegah login dengan role berbeda
+                session(['active_role' => $user->peran]);
 
                 // Redirect berdasarkan role
                 if ($user->peran === 'admin') {
@@ -193,8 +219,22 @@ class GoogleController extends Controller
                 // Buat user baru
                 $user = User::create($userData);
 
+                // Cek jika sudah ada role berbeda yang login di session ini
+                if (Auth::check()) {
+                    $currentActiveRole = session('active_role');
+                    if ($currentActiveRole && $currentActiveRole !== $user->peran) {
+                        // Logout dulu jika role berbeda
+                        Auth::logout();
+                        $request->session()->invalidate();
+                        $request->session()->regenerateToken();
+                    }
+                }
+
                 // Login user
                 Auth::login($user, true);
+                
+                // Simpan active_role di session untuk mencegah login dengan role berbeda
+                session(['active_role' => $user->peran]);
 
                 // Buat notifikasi untuk admin jika user mendaftar sebagai pemilik kos
                 if ($role === 'pemilik') {

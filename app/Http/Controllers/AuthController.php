@@ -30,6 +30,20 @@ class AuthController extends Controller
             'role' => 'required|in:pencari,pemilik',
         ]);
 
+        // Cek jika sudah ada user yang login dengan role berbeda di session ini
+        // Logout dulu sebelum proses login baru untuk mencegah login bersamaan dengan role berbeda
+        if (Auth::check()) {
+            $currentActiveRole = session('active_role');
+            $currentUser = Auth::user();
+            
+            // Jika ada active_role yang berbeda dari role yang akan di-login, logout dulu
+            if ($currentActiveRole && $currentActiveRole !== $request->role) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+        }
+
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->kata_sandi)) {
@@ -45,6 +59,16 @@ class AuthController extends Controller
                 ->withInput($request->only('email', 'role'));
         }
 
+        // Pastikan tidak ada user lain yang login dengan role berbeda di session ini
+        if (Auth::check()) {
+            $currentActiveRole = session('active_role');
+            if ($currentActiveRole && $currentActiveRole !== $user->role) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+        }
+
         if ($user->status !== 'Aktif') {
             return redirect()->route('beranda', ['modal' => 'login', 'role' => $request->role])
                 ->withErrors(['email' => 'Akun Anda tidak aktif.'])
@@ -54,11 +78,16 @@ class AuthController extends Controller
         // Cek email verification
         if (!$user->hasVerifiedEmail()) {
             Auth::login($user, $request->remember ?? false);
+            // Simpan active_role untuk verifikasi email
+            session(['active_role' => $user->role]);
             return redirect()->route('verification.notice')
                 ->with('warning', 'Silakan verifikasi email Anda terlebih dahulu untuk melanjutkan.');
         }
 
         Auth::login($user, $request->remember ?? false);
+        
+        // Simpan active_role di session untuk mencegah login dengan role berbeda
+        session(['active_role' => $user->role]);
 
         if (in_array($user->role, ['pencari', 'pemilik'])) {
             session()->flash('show_welcome_message', true);
@@ -125,6 +154,17 @@ class AuthController extends Controller
             $userData['nomor_rekening'] = $request->account_number;
         }
 
+        // Cek jika sudah ada role berbeda yang login di session ini
+        if (Auth::check()) {
+            $currentActiveRole = session('active_role');
+            if ($currentActiveRole && $currentActiveRole !== $request->role) {
+                // Logout dulu jika role berbeda
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+        }
+
         // Buat user
         $user = User::create($userData);
         
@@ -133,6 +173,9 @@ class AuthController extends Controller
         
         // Login user (tapi akan dicek email verification saat akses fitur tertentu)
         Auth::login($user);
+        
+        // Simpan active_role di session untuk mencegah login dengan role berbeda
+        session(['active_role' => $user->role]);
 
         // Buat notifikasi untuk admin jika user mendaftar sebagai pemilik kos
         if ($request->role === 'pemilik') {
@@ -154,11 +197,28 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        try {
+            // Clear active_role dari session sebelum logout
+            $request->session()->forget('active_role');
+            
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        return redirect()->route('beranda');
+            return redirect()->route('beranda')
+                ->with('success', 'Anda telah berhasil logout.');
+        } catch (\Exception $e) {
+            // Jika terjadi error saat logout (misalnya session sudah invalid),
+            // tetap redirect ke beranda
+            try {
+                Auth::logout();
+            } catch (\Exception $e2) {
+                // Ignore jika sudah logout
+            }
+            
+            return redirect()->route('beranda')
+                ->with('info', 'Anda telah logout.');
+        }
     }
 
     /**
@@ -209,6 +269,17 @@ class AuthController extends Controller
             $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
+                // Cek jika sudah ada role berbeda yang login di session ini
+                if (Auth::check()) {
+                    $currentActiveRole = session('active_role');
+                    if ($currentActiveRole && $currentActiveRole !== $user->role) {
+                        // Logout dulu jika role berbeda
+                        Auth::logout();
+                        request()->session()->invalidate();
+                        request()->session()->regenerateToken();
+                    }
+                }
+
                 // User sudah terdaftar, lakukan login
                 // Cek apakah role sesuai
                 if ($user->role !== $role && $user->role !== 'admin') {
@@ -229,6 +300,9 @@ class AuthController extends Controller
 
                 // Login user
                 Auth::login($user, true);
+                
+                // Simpan active_role di session untuk mencegah login dengan role berbeda
+                session(['active_role' => $user->role]);
 
                 // Redirect berdasarkan role
                 if ($user->role === 'admin') {
@@ -262,8 +336,22 @@ class AuthController extends Controller
                 // Buat user baru
                 $user = User::create($userData);
 
+                // Cek jika sudah ada role berbeda yang login di session ini
+                if (Auth::check()) {
+                    $currentActiveRole = session('active_role');
+                    if ($currentActiveRole && $currentActiveRole !== $user->role) {
+                        // Logout dulu jika role berbeda
+                        Auth::logout();
+                        request()->session()->invalidate();
+                        request()->session()->regenerateToken();
+                    }
+                }
+
                 // Login user
                 Auth::login($user, true);
+                
+                // Simpan active_role di session untuk mencegah login dengan role berbeda
+                session(['active_role' => $user->role]);
 
                 // Buat notifikasi untuk admin jika user mendaftar sebagai pemilik kos
                 if ($role === 'pemilik') {

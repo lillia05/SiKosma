@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class BerandaController extends Controller
 {
@@ -12,6 +13,19 @@ class BerandaController extends Controller
      */
     public function index(Request $request)
     {
+        // Jika user sudah login, redirect ke dashboard sesuai role
+        if (Auth::check()) {
+            $activeRole = session('active_role') ?? Auth::user()->role;
+            
+            if ($activeRole === 'admin') {
+                return redirect()->route('admin.dashboard');
+            } elseif ($activeRole === 'pemilik') {
+                return redirect()->route('pemilik.dashboard');
+            } elseif ($activeRole === 'pencari') {
+                return redirect()->route('pencari.beranda');
+            }
+        }
+
         $query = Kos::where('status', 'Disetujui')
             ->with(['rooms' => function($q) {
                 // Hanya tampilkan kamar yang tersedia (tidak ada booking aktif)

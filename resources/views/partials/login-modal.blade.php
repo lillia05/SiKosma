@@ -143,7 +143,7 @@
 
                     <div class="text-center">
                         <p class="text-sm text-gray-600 font-poppins">
-                            Belum punya akun?{" "}
+                            Belum punya akun?
                             <a
                                 href="{{ route('beranda', ['modal' => 'register', 'role' => $currentRole]) }}"
                                 class="text-blue-900 font-semibold hover:underline"

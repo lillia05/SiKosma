@@ -191,7 +191,7 @@
 
                     <div class="text-center">
                         <p class="text-sm text-gray-600 font-poppins">
-                            Sudah punya akun?{" "}
+                            Sudah punya akun?
                             <a
                                 href="{{ route('beranda', ['modal' => 'login', 'role' => $currentRole]) }}"
                                 class="text-blue-900 font-semibold hover:underline"

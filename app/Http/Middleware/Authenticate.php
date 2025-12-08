@@ -12,6 +12,26 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : route('login');
+        // Redirect ke beranda dengan pesan error, bukan ke route login yang tidak ada
+        if ($request->expectsJson()) {
+            return null;
+        }
+        
+        // Redirect ke beranda dengan pesan bahwa session telah berakhir
+        return route('beranda');
+    }
+    
+    /**
+     * Handle an unauthenticated user.
+     */
+    protected function unauthenticated($request, array $guards)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+        
+        // Redirect ke beranda dengan pesan yang jelas
+        return redirect()->route('beranda')
+            ->with('error', 'Session Anda telah berakhir. Silakan login kembali.');
     }
 }
