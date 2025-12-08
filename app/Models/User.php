@@ -33,6 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'nomor_rekening',
         'status',
         'foto_profil',
+        'google_id',
     ];
 
     /**

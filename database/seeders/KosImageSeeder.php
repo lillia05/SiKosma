@@ -14,12 +14,19 @@ class KosImageSeeder extends Seeder
         // Catatan: Kos images akan di-input oleh pemilik kos melalui form upload
         // Seeder ini hanya untuk data sample/demo jika diperlukan
         
+        // Pastikan folder kos-images sudah ada
+        if (!\Illuminate\Support\Facades\Storage::disk('public')->exists('kos-images')) {
+            \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('kos-images');
+            $this->command->info('✅ Folder kos-images berhasil dibuat di storage/app/public/kos-images/');
+        }
+        
         // Get all kos
         $kos1 = Kos::where('nama', 'Kos Putri Sahara')->first();
         $kos2 = Kos::where('nama', 'Kos Putra Kampung Baru')->first();
         $kos3 = Kos::where('nama', 'Kos Putri Melati')->first();
         $kos4 = Kos::where('nama', 'Kos Putra Ali')->first();
         $kos5 = Kos::where('nama', 'Kos Campur Adam')->first();
+        $kos7 = Kos::where('nama', 'Kos Putri Bunga')->first();
 
         // Kos Putri Sahara - Images
         if ($kos1) {
@@ -93,6 +100,22 @@ class KosImageSeeder extends Seeder
             // Kamar 6, 7, 8, 9, 10 (kamar tersedia)
             for ($i = 6; $i <= 10; $i++) {
                 $this->createKosImage($kos5->id, "kamar-{$i}.png", 'kamar');
+            }
+        }
+
+        // Kos Putri Bunga - Images (menggunakan gambar yang sama dengan Kos Putri Sahara)
+        if ($kos7) {
+            // Gambar utama kos (general) - sama dengan Kos Putri Sahara
+            $this->createKosImage($kos7->id, 'kos-putri-sahara-1.png', 'general');
+            $this->createKosImage($kos7->id, 'kos-putri-sahara-2.png', 'general');
+            $this->createKosImage($kos7->id, 'kos-putri-sahara-3.png', 'general');
+            $this->createKosImage($kos7->id, 'kos-putri-sahara-4.png', 'general');
+            
+            // Gambar kamar (format: kamar-{nomor_kamar}.png) - menggunakan file yang sama dengan Kos Putri Sahara
+            // Kos Putri Bunga punya 5 kamar (1-5), kamar 2-5 tersedia, tapi menggunakan file gambar yang sama
+            // Kamar 2, 3, 4, 5 (kamar tersedia) - menggunakan file gambar kamar-4.png sampai kamar-8.png dari Kos Putri Sahara
+            for ($i = 4; $i <= 8; $i++) {
+                $this->createKosImage($kos7->id, "kamar-{$i}.png", 'kamar');
             }
         }
         

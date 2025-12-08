@@ -120,9 +120,11 @@
                                 <input
                                     type="radio"
                                     name="metode_pembayaran"
+                                    id="metode_transfer_bank"
                                     value="Transfer Bank"
                                     {{ old('metode_pembayaran', 'Transfer Bank') == 'Transfer Bank' ? 'checked' : '' }}
                                     class="w-4 h-4"
+                                    onchange="toggleBankSelect()"
                                 />
                                 <span>Transfer Bank</span>
                             </label>
@@ -130,9 +132,11 @@
                                 <input
                                     type="radio"
                                     name="metode_pembayaran"
+                                    id="metode_ewallet"
                                     value="E-Wallet"
                                     {{ old('metode_pembayaran') == 'E-Wallet' ? 'checked' : '' }}
                                     class="w-4 h-4"
+                                    onchange="toggleBankSelect()"
                                 />
                                 <span>E-Wallet</span>
                             </label>
@@ -148,10 +152,14 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1 font-poppins">Bank/E-Wallet Asal</label>
+                            
+                            <!-- Select untuk Bank -->
                             <select
+                                id="nama_bank_pengirim_bank"
                                 name="nama_bank_pengirim"
                                 required
                                 class="w-full px-3 py-2 border {{ $errors->has('nama_bank_pengirim') ? 'border-red-500' : 'border-gray-300' }} rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-poppins"
+                                style="display: {{ old('metode_pembayaran', 'Transfer Bank') == 'Transfer Bank' ? 'block' : 'none' }};"
                             >
                                 <option value="Bank Negara Indonesia (BNI)" {{ old('nama_bank_pengirim') == 'Bank Negara Indonesia (BNI)' ? 'selected' : '' }}>Bank Negara Indonesia (BNI)</option>
                                 <option value="Bank Rakyat Indonesia (BRI)" {{ old('nama_bank_pengirim') == 'Bank Rakyat Indonesia (BRI)' ? 'selected' : '' }}>Bank Rakyat Indonesia (BRI)</option>
@@ -160,12 +168,23 @@
                                 <option value="CIMB Niaga" {{ old('nama_bank_pengirim') == 'CIMB Niaga' ? 'selected' : '' }}>CIMB Niaga</option>
                                 <option value="Bank Tabungan Negara (BTN)" {{ old('nama_bank_pengirim') == 'Bank Tabungan Negara (BTN)' ? 'selected' : '' }}>Bank Tabungan Negara (BTN)</option>
                                 <option value="Bank Danamon" {{ old('nama_bank_pengirim') == 'Bank Danamon' ? 'selected' : '' }}>Bank Danamon</option>
+                            </select>
+                            
+                            <!-- Select untuk E-Wallet -->
+                            <select
+                                id="nama_bank_pengirim_ewallet"
+                                name="nama_bank_pengirim"
+                                required
+                                class="w-full px-3 py-2 border {{ $errors->has('nama_bank_pengirim') ? 'border-red-500' : 'border-gray-300' }} rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue font-poppins"
+                                style="display: {{ old('metode_pembayaran') == 'E-Wallet' ? 'block' : 'none' }};"
+                            >
                                 <option value="OVO" {{ old('nama_bank_pengirim') == 'OVO' ? 'selected' : '' }}>OVO</option>
                                 <option value="GoPay" {{ old('nama_bank_pengirim') == 'GoPay' ? 'selected' : '' }}>GoPay</option>
                                 <option value="DANA" {{ old('nama_bank_pengirim') == 'DANA' ? 'selected' : '' }}>DANA</option>
                                 <option value="LinkAja" {{ old('nama_bank_pengirim') == 'LinkAja' ? 'selected' : '' }}>LinkAja</option>
                                 <option value="ShopeePay" {{ old('nama_bank_pengirim') == 'ShopeePay' ? 'selected' : '' }}>ShopeePay</option>
                             </select>
+                            
                             @error('nama_bank_pengirim')
                                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -381,6 +400,33 @@
         }
     }
 
+    // Fungsi untuk toggle show/hide select bank dan e-wallet
+    function toggleBankSelect() {
+        const bankSelect = document.getElementById('nama_bank_pengirim_bank');
+        const ewalletSelect = document.getElementById('nama_bank_pengirim_ewallet');
+        const transferBankRadio = document.getElementById('metode_transfer_bank');
+        
+        if (!bankSelect || !ewalletSelect) return;
+        
+        if (transferBankRadio && transferBankRadio.checked) {
+            // Tampilkan select bank, sembunyikan e-wallet
+            bankSelect.style.display = 'block';
+            bankSelect.required = true;
+            ewalletSelect.style.display = 'none';
+            ewalletSelect.required = false;
+            ewalletSelect.name = ''; // Hapus name agar tidak ikut submit
+            bankSelect.name = 'nama_bank_pengirim'; // Set name untuk submit
+        } else {
+            // Tampilkan select e-wallet, sembunyikan bank
+            bankSelect.style.display = 'none';
+            bankSelect.required = false;
+            bankSelect.name = ''; // Hapus name agar tidak ikut submit
+            ewalletSelect.style.display = 'block';
+            ewalletSelect.required = true;
+            ewalletSelect.name = 'nama_bank_pengirim'; // Set name untuk submit
+        }
+    }
+
     // Pastikan fungsi tersedia saat DOM ready
     document.addEventListener('DOMContentLoaded', function() {
         const input = document.getElementById('bukti_pembayaran');
@@ -398,6 +444,9 @@
                 });
             }
         }
+        
+        // Inisialisasi toggle select saat halaman dimuat
+        toggleBankSelect();
     });
 </script>
 @endsection

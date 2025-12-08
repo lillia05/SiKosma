@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Contracts\Factory as Socialite;
 
 class AuthController extends Controller
 {
@@ -158,6 +159,136 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('beranda');
+    }
+
+    /**
+     * Redirect ke Google OAuth untuk login/register
+     */
+    public function redirectToGoogle(Request $request, Socialite $socialite)
+    {
+        try {
+            // Validasi role yang dipilih
+            $request->validate([
+                'role' => 'required|in:pencari,pemilik',
+            ]);
+
+            // Simpan role di session untuk digunakan saat callback
+            session(['google_oauth_role' => $request->role]);
+
+            // Cek apakah Google OAuth credentials sudah di-setup
+            if (empty(config('services.google.client_id')) || empty(config('services.google.client_secret'))) {
+                return redirect()->route('beranda', ['modal' => $request->has('register') ? 'register' : 'login', 'role' => $request->role])
+                    ->withErrors(['email' => 'Google OAuth belum dikonfigurasi. Silakan hubungi administrator.']);
+            }
+
+            // Redirect ke Google OAuth
+            return $socialite->driver('google')
+                ->scopes(['email', 'profile'])
+                ->redirect();
+        } catch (\Exception $e) {
+            // Jika terjadi error, redirect kembali dengan pesan error
+            return redirect()->route('beranda', ['modal' => $request->has('register') ? 'register' : 'login', 'role' => $request->role ?? 'pencari'])
+                ->withErrors(['email' => 'Gagal mengarahkan ke Google. Silakan coba lagi atau hubungi administrator.']);
+        }
+    }
+
+    /**
+     * Handle callback dari Google OAuth
+     */
+    public function handleGoogleCallback(Socialite $socialite)
+    {
+        try {
+            // Ambil data user dari Google
+            $googleUser = $socialite->driver('google')->user();
+
+            // Ambil role dari session
+            $role = session('google_oauth_role', 'pencari');
+            session()->forget('google_oauth_role');
+
+            // Cek apakah user sudah terdaftar
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if ($user) {
+                // User sudah terdaftar, lakukan login
+                // Cek apakah role sesuai
+                if ($user->role !== $role && $user->role !== 'admin') {
+                    return redirect()->route('beranda', ['modal' => 'login', 'role' => $role])
+                        ->withErrors(['email' => 'Email ini sudah terdaftar sebagai ' . ($user->role === 'pencari' ? 'Pencari Kos' : 'Pemilik Kos') . '.']);
+                }
+
+                // Cek status akun
+                if ($user->status !== 'Aktif') {
+                    return redirect()->route('beranda', ['modal' => 'login', 'role' => $role])
+                        ->withErrors(['email' => 'Akun Anda tidak aktif.']);
+                }
+
+                // Update foto profil jika ada dari Google
+                if ($googleUser->getAvatar() && !$user->profile_photo_url) {
+                    $user->update(['profile_photo_url' => $googleUser->getAvatar()]);
+                }
+
+                // Login user
+                Auth::login($user, true);
+
+                // Redirect berdasarkan role
+                if ($user->role === 'admin') {
+                    return redirect()->route('admin.dashboard')
+                        ->with('success', 'Berhasil login dengan Google!');
+                } elseif ($user->role === 'pemilik') {
+                    return redirect()->route('pemilik.dashboard')
+                        ->with('success', 'Berhasil login dengan Google!');
+                } else {
+                    return redirect()->route('pencari.beranda')
+                        ->with('success', 'Berhasil login dengan Google!');
+                }
+            } else {
+                // User belum terdaftar, buat akun baru
+                $userData = [
+                    'nama' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'kata_sandi' => Hash::make(uniqid('google_', true)), // Password random karena login via Google
+                    'peran' => $role,
+                    'status' => 'Aktif',
+                    'email_verified_at' => now(), // Email dari Google sudah verified
+                    'profile_photo_url' => $googleUser->getAvatar(),
+                ];
+
+                // Tambahkan field bank untuk pemilik (kosongkan dulu, bisa diisi nanti)
+                if ($role === 'pemilik') {
+                    $userData['nama_bank'] = null;
+                    $userData['nomor_rekening'] = null;
+                }
+
+                // Buat user baru
+                $user = User::create($userData);
+
+                // Login user
+                Auth::login($user, true);
+
+                // Buat notifikasi untuk admin jika user mendaftar sebagai pemilik kos
+                if ($role === 'pemilik') {
+                    \App\Helpers\NotificationHelper::notifyAdmins(
+                        'Pemilik Kos Baru Mendaftar',
+                        'Pemilik kos baru "' . $user->nama . '" (' . $user->email . ') telah mendaftar via Google.',
+                        'system',
+                        $user->id
+                    );
+                }
+
+                // Redirect berdasarkan role
+                if ($role === 'pemilik') {
+                    return redirect()->route('pemilik.dashboard')
+                        ->with('success', 'Registrasi berhasil! Selamat datang, ' . $user->nama . '!');
+                } else {
+                    return redirect()->route('pencari.beranda')
+                        ->with('success', 'Registrasi berhasil! Selamat datang, ' . $user->nama . '!');
+                }
+            }
+        } catch (\Exception $e) {
+            // Jika terjadi error, redirect kembali ke halaman login
+            return redirect()->route('beranda', ['modal' => 'login'])
+                ->withErrors(['email' => 'Gagal login dengan Google. Silakan coba lagi.']);
+        }
     }
 }
 
