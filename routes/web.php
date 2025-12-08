@@ -24,11 +24,15 @@ Route::get('/tentang', [BerandaController::class, 'tentang'])->name('tentang');
 
 // Routes detail kos dan penyewaan
 Route::get('/kos/{id}', [App\Http\Controllers\KosController::class, 'detail'])->name('kos.detail');
-Route::get('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'booking'])->name('kos.booking');
-Route::post('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'storeBooking'])->name('kos.booking.store');
 
-// Routes pembayaran (perlu login)
-Route::middleware('auth')->group(function () {
+// Routes booking (perlu login dan verifikasi email)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'booking'])->name('kos.booking');
+    Route::post('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'storeBooking'])->name('kos.booking.store');
+});
+
+// Routes pembayaran (perlu login dan verifikasi email)
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/pembayaran', [App\Http\Controllers\PaymentController::class, 'index'])->name('pembayaran.index');
     Route::post('/pembayaran', [App\Http\Controllers\PaymentController::class, 'store'])->name('pembayaran.store');
 });
@@ -80,8 +84,8 @@ Route::middleware('auth')->group(function () {
     })->middleware('throttle:6,1')->name('verification.send');
 });
 
-// Routes profile (terautentikasi)
-Route::middleware('auth')->group(function () {
+// Routes profile (perlu login dan verifikasi email)
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
     Route::get('/riwayat', [App\Http\Controllers\RiwayatController::class, 'index'])->name('riwayat.index');
 
@@ -93,13 +97,13 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Routes pencari (terautentikasi)
-Route::middleware(['auth', 'auth.role:pencari'])->prefix('pencari')->name('pencari.')->group(function () {
+// Routes pencari (perlu login, verifikasi email, dan role pencari)
+Route::middleware(['auth', 'verified', 'auth.role:pencari'])->prefix('pencari')->name('pencari.')->group(function () {
     Route::get('/beranda', [PencariController::class, 'beranda'])->name('beranda');
 });
 
-// Routes pemilik (terautentikasi)
-Route::middleware(['auth', 'auth.role:pemilik'])->prefix('pemilik')->name('pemilik.')->group(function () {
+// Routes pemilik (perlu login, verifikasi email, dan role pemilik)
+Route::middleware(['auth', 'verified', 'auth.role:pemilik'])->prefix('pemilik')->name('pemilik.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\PemilikController::class, 'dashboard'])->name('dashboard');
     Route::get('/properti', [App\Http\Controllers\PemilikController::class, 'properti'])->name('properti');
     Route::get('/pemesanan', [App\Http\Controllers\PemilikController::class, 'pemesanan'])->name('pemesanan');
@@ -110,8 +114,8 @@ Route::middleware(['auth', 'auth.role:pemilik'])->prefix('pemilik')->name('pemil
     Route::put('/kos/{id}', [App\Http\Controllers\PemilikController::class, 'update'])->name('kos.update');
 });
 
-// Routes admin (terautentikasi) - placeholder
-Route::middleware(['auth', 'auth.role:admin'])->prefix('admin')->name('admin.')->group(function () {
+// Routes admin (perlu login, verifikasi email, dan role admin)
+Route::middleware(['auth', 'verified', 'auth.role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/verifikasi-kos', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'index'])->name('verifikasi-kos');
     Route::get('/verifikasi-kos/{id}/detail', [App\Http\Controllers\Admin\AdminVerifikasiKosController::class, 'detail'])->name('verifikasi-kos.detail');

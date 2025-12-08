@@ -22,9 +22,11 @@
                     Tentang
                 </a>
                 @auth
-                    <a href="{{ route('riwayat.index') }}" class="font-poppins transition text-base no-underline {{ request()->routeIs('riwayat.*') ? 'text-primary-blue font-semibold' : 'text-gray-600 font-medium' }} hover:underline">
-                        Riwayat
-                    </a>
+                    @if(Auth::user()->hasVerifiedEmail())
+                        <a href="{{ route('riwayat.index') }}" class="font-poppins transition text-base no-underline {{ request()->routeIs('riwayat.*') ? 'text-primary-blue font-semibold' : 'text-gray-600 font-medium' }} hover:underline">
+                            Riwayat
+                        </a>
+                    @endif
                 @endauth
                 
                 @auth
@@ -44,16 +46,18 @@
                             </svg>
                         </button>
                         <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200">
-                            <a href="{{ route('beranda', ['modal' => 'profile']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 no-underline">
-                                <div class="flex items-center gap-2">
-                                    {{-- Heroicons: user-circle (outline) - https://heroicons.com/ --}}
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                    </svg>
-                                    <span>Profil</span>
-                                </div>
-                            </a>
-                            <hr class="my-1 border-gray-200">
+                            @if(Auth::user()->hasVerifiedEmail())
+                                <a href="{{ route('beranda', ['modal' => 'profile']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 no-underline">
+                                    <div class="flex items-center gap-2">
+                                        {{-- Heroicons: user-circle (outline) - https://heroicons.com/ --}}
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        </svg>
+                                        <span>Profil</span>
+                                    </div>
+                                </a>
+                                <hr class="my-1 border-gray-200">
+                            @endif
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">

@@ -152,7 +152,7 @@
                                 </svg>
                                 Ulasan & Rating
                             </h3>
-                            @if($canReview && $userBooking)
+                            @if($canReview && $userBooking && Auth::check() && Auth::user()->hasVerifiedEmail())
                                 <a href="{{ route('ulasan.create', $kos->id) }}" 
                                    class="bg-primary-blue text-white px-4 py-2 rounded-lg hover:bg-blue-900 transition font-poppins no-underline flex items-center gap-2">
                                     {{-- Heroicons: pencil-square (outline) - https://heroicons.com/ --}}
@@ -255,10 +255,18 @@
                                     </p>
                                     <p class="text-sm text-gray-600 mb-4 font-poppins">/ Tahun</p>
                                     @auth
-                                        <a href="{{ route('kos.booking', ['id' => $kos->id, 'kamar' => $room->id]) }}" 
-                                           class="w-full bg-primary-blue text-white font-bold py-2 rounded-lg hover:bg-blue-900 transition font-poppins block text-center no-underline">
-                                            Sewa Sekarang
-                                        </a>
+                                        @if(Auth::user()->hasVerifiedEmail())
+                                            <a href="{{ route('kos.booking', ['id' => $kos->id, 'kamar' => $room->id]) }}" 
+                                               class="w-full bg-primary-blue text-white font-bold py-2 rounded-lg hover:bg-blue-900 transition font-poppins block text-center no-underline">
+                                                Sewa Sekarang
+                                            </a>
+                                        @else
+                                            <a href="{{ route('verification.notice') }}" 
+                                               class="w-full bg-gray-400 text-white font-bold py-2 rounded-lg cursor-not-allowed transition font-poppins block text-center no-underline"
+                                               title="Verifikasi email Anda terlebih dahulu untuk melakukan booking">
+                                                Verifikasi Email Dulu
+                                            </a>
+                                        @endif
                                     @else
                                         <button
                                             type="button"
