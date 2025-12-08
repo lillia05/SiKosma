@@ -40,6 +40,7 @@
             const profileDropdownButton = document.getElementById('profileDropdownButton');
             const profileDropdown = document.getElementById('profileDropdown');
             const profileDropdownContainer = document.getElementById('profileDropdownContainer');
+            const profileModal = document.getElementById('profileModalOverlay');
             
             if (profileDropdownButton && profileDropdown) {
                 // Toggle dropdown on button click
@@ -59,6 +60,37 @@
                 profileDropdown.addEventListener('click', function(e) {
                     e.stopPropagation();
                 });
+            }
+
+            // Handle profile modal - show if modal=profile in URL
+            if (profileModal) {
+                // Check if modal=profile is in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('modal') === 'profile') {
+                    profileModal.classList.remove('hidden');
+                }
+
+                // Close on overlay click
+                profileModal.addEventListener('click', function(e) {
+                    if (e.target === profileModal) {
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('modal');
+                        url.searchParams.delete('edit');
+                        window.location.href = url.toString();
+                    }
+                });
+
+                // Close button in modal (X button) - prevent default link behavior
+                const closeButton = profileModal.querySelector('a[href*="dashboard"], a[href*="beranda"]');
+                if (closeButton) {
+                    closeButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('modal');
+                        url.searchParams.delete('edit');
+                        window.location.href = url.toString();
+                    });
+                }
             }
         });
     </script>

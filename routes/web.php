@@ -27,8 +27,8 @@ Route::get('/kos/{id}', [App\Http\Controllers\KosController::class, 'detail'])->
 
 // Routes booking (perlu login dan verifikasi email)
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'booking'])->name('kos.booking');
-    Route::post('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'storeBooking'])->name('kos.booking.store');
+Route::get('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'booking'])->name('kos.booking');
+Route::post('/kos/{id}/booking', [App\Http\Controllers\KosController::class, 'storeBooking'])->name('kos.booking.store');
 });
 
 // Routes pembayaran (perlu login dan verifikasi email)

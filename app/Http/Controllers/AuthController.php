@@ -201,9 +201,9 @@ class AuthController extends Controller
             // Clear active_role dari session sebelum logout
             $request->session()->forget('active_role');
             
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
             return redirect()->route('beranda')
                 ->with('success', 'Anda telah berhasil logout.');

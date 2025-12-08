@@ -18,9 +18,9 @@ class AuthMiddleware
     public function handle(Request $request, Closure $next, ?string $role = null): Response
     {
         try {
-            if (!Auth::check()) {
-                return redirect()->route('beranda')->with('error', 'Silakan login terlebih dahulu.');
-            }
+        if (!Auth::check()) {
+            return redirect()->route('beranda')->with('error', 'Silakan login terlebih dahulu.');
+        }
 
             // Cek jika ada role yang di-require
             if ($role) {
@@ -67,9 +67,9 @@ class AuthMiddleware
                     return redirect()->route('beranda')
                         ->with('error', 'Session Anda telah berakhir. Silakan login kembali.');
                 }
-            }
+        }
 
-            return $next($request);
+        return $next($request);
         } catch (\Illuminate\Session\TokenMismatchException $e) {
             // Handle CSRF token mismatch
             Auth::logout();

@@ -141,8 +141,14 @@
                 });
             }
 
-            // Handle profile modal close - stay on current page
+            // Handle profile modal - show if modal=profile in URL
             if (profileModal) {
+                // Check if modal=profile is in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('modal') === 'profile') {
+                    profileModal.classList.remove('hidden');
+                }
+
                 // Close on overlay click
                 profileModal.addEventListener('click', function(e) {
                     if (e.target === profileModal) {

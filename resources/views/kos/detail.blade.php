@@ -256,10 +256,10 @@
                                     <p class="text-sm text-gray-600 mb-4 font-poppins">/ Tahun</p>
                                     @auth
                                         @if(Auth::user()->hasVerifiedEmail())
-                                            <a href="{{ route('kos.booking', ['id' => $kos->id, 'kamar' => $room->id]) }}" 
-                                               class="w-full bg-primary-blue text-white font-bold py-2 rounded-lg hover:bg-blue-900 transition font-poppins block text-center no-underline">
-                                                Sewa Sekarang
-                                            </a>
+                                        <a href="{{ route('kos.booking', ['id' => $kos->id, 'kamar' => $room->id]) }}" 
+                                           class="w-full bg-primary-blue text-white font-bold py-2 rounded-lg hover:bg-blue-900 transition font-poppins block text-center no-underline">
+                                            Sewa Sekarang
+                                        </a>
                                         @else
                                             <a href="{{ route('verification.notice') }}" 
                                                class="w-full bg-gray-400 text-white font-bold py-2 rounded-lg cursor-not-allowed transition font-poppins block text-center no-underline"

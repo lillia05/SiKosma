@@ -116,15 +116,24 @@
                 });
             }
 
-            // Open modal when profile link is clicked
-            if (profileLink && profileModal) {
-                profileLink.addEventListener('click', function(e) {
-                    e.preventDefault();
+            // Handle profile modal - show if modal=profile in URL
+            if (profileModal) {
+                // Check if modal=profile is in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('modal') === 'profile') {
                     profileModal.classList.remove('hidden');
-                    if (profileDropdown) {
-                        profileDropdown.classList.add('hidden');
-                    }
-                });
+                }
+
+                // Open modal when profile link is clicked
+                if (profileLink) {
+                    profileLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        profileModal.classList.remove('hidden');
+                        if (profileDropdown) {
+                            profileDropdown.classList.add('hidden');
+                        }
+                    });
+                }
             }
         });
     </script>
